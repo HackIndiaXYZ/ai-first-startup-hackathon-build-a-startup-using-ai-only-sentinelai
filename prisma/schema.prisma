@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  name           String?
+  passwordHash   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  settings UserSettings?
+
+  projects       Project[]
+  messages       AIMessage[]
+  conversations  Conversation[]
+}
+
+model Conversation {
+  id        String      @id @default(cuid())
+  title     String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  messages  AIMessage[]
+
+  @@index([userId])
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  findings    Finding[]
+}
+
+model UserSettings {
+  id               String   @id @default(cuid())
+
+  theme            String   @default("dark")
+  compactMode      Boolean  @default(false)
+  animations       Boolean  @default(true)
+
+  responseStyle    String   @default("balanced")
+  securityMode     Boolean  @default(true)
+  workspaceContext Boolean  @default(true)
+  codeExamples     Boolean  @default(true)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Finding {
+  id             String   @id @default(cuid())
+  title          String
+  description    String
+  severity       String
+  status         String   @default("OPEN")
+
+  confidence     Int      @default(50)
+  evidence       String?
+  recommendation String?
+  filename       String?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model AIMessage {
+  id             String       @id @default(cuid())
+  role           String
+  content        String
+  createdAt      DateTime     @default(now())
+
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([conversationId])
+  @@index([createdAt])
+}
