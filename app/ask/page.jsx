@@ -45,7 +45,6 @@ const THINKING_STAGES = [
   "Preparing final response",
 ];
 
-
 // ======================================================
 // MARKDOWN RESPONSE
 // ======================================================
@@ -53,11 +52,9 @@ const THINKING_STAGES = [
 function MessageContent({ content }) {
   return (
     <div className="max-w-none text-[13px] leading-7 text-[#AEB4BF]">
-
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-
           // ------------------------------------------------
           // PARAGRAPH
           // ------------------------------------------------
@@ -69,7 +66,6 @@ function MessageContent({ content }) {
               </p>
             );
           },
-
 
           // ------------------------------------------------
           // HEADINGS
@@ -107,7 +103,6 @@ function MessageContent({ content }) {
             );
           },
 
-
           // ------------------------------------------------
           // LISTS
           // ------------------------------------------------
@@ -136,7 +131,6 @@ function MessageContent({ content }) {
             );
           },
 
-
           // ------------------------------------------------
           // STRONG / EMPHASIS
           // ------------------------------------------------
@@ -156,7 +150,6 @@ function MessageContent({ content }) {
               </em>
             );
           },
-
 
           // ------------------------------------------------
           // INLINE CODE
@@ -182,7 +175,6 @@ function MessageContent({ content }) {
               </code>
             );
           },
-
 
           // ------------------------------------------------
           // CODE BLOCK
@@ -242,7 +234,6 @@ function MessageContent({ content }) {
             );
           },
 
-
           // ------------------------------------------------
           // BLOCKQUOTE
           // ------------------------------------------------
@@ -250,21 +241,16 @@ function MessageContent({ content }) {
           blockquote({ children }) {
             return (
               <div className="my-5 rounded-xl border border-yellow-500/15 bg-yellow-500/[0.035] p-4">
-
                 <div className="flex gap-3">
-
                   <div className="mt-1 h-4 w-1 shrink-0 rounded-full bg-yellow-500/60" />
 
                   <div className="min-w-0 text-[#A8ADB7]">
                     {children}
                   </div>
-
                 </div>
-
               </div>
             );
           },
-
 
           // ------------------------------------------------
           // HORIZONTAL RULE
@@ -276,7 +262,6 @@ function MessageContent({ content }) {
             );
           },
 
-
           // ------------------------------------------------
           // TABLE
           // ------------------------------------------------
@@ -284,15 +269,11 @@ function MessageContent({ content }) {
           table({ children }) {
             return (
               <div className="my-6 overflow-hidden rounded-xl border border-white/[0.07] bg-[#050608]">
-
                 <div className="overflow-x-auto">
-
                   <table className="w-full min-w-[500px] border-collapse text-[12px]">
                     {children}
                   </table>
-
                 </div>
-
               </div>
             );
           },
@@ -337,7 +318,6 @@ function MessageContent({ content }) {
             );
           },
 
-
           // ------------------------------------------------
           // LINKS
           // ------------------------------------------------
@@ -355,7 +335,6 @@ function MessageContent({ content }) {
             );
           },
 
-
           // ------------------------------------------------
           // IMAGE
           // ------------------------------------------------
@@ -369,16 +348,13 @@ function MessageContent({ content }) {
               />
             );
           },
-
         }}
       >
         {content}
       </ReactMarkdown>
-
     </div>
   );
 }
-
 
 // ======================================================
 // CODE BLOCK
@@ -405,25 +381,19 @@ function CodeBlock({
 
   return (
     <div className="my-6 overflow-hidden rounded-xl border border-white/[0.08] bg-[#050608] shadow-xl shadow-black/20">
-
       {/* CODE HEADER */}
 
       <div className="flex items-center justify-between border-b border-white/[0.06] bg-white/[0.025] px-4 py-2.5">
-
         <div className="flex items-center gap-3">
-
           <div className="flex gap-1.5">
-
             <span className="h-2.5 w-2.5 rounded-full bg-red-400/50" />
             <span className="h-2.5 w-2.5 rounded-full bg-yellow-400/50" />
             <span className="h-2.5 w-2.5 rounded-full bg-green-400/50" />
-
           </div>
 
           <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#555D6B]">
             {language}
           </span>
-
         </div>
 
         <button
@@ -433,24 +403,18 @@ function CodeBlock({
         >
           {copied ? "Copied" : "Copy"}
         </button>
-
       </div>
-
 
       {/* CODE */}
 
       <div className="overflow-x-auto p-5">
-
         <pre className="m-0">
           {children}
         </pre>
-
       </div>
-
     </div>
   );
 }
-
 
 // ======================================================
 // THINKING INDICATOR
@@ -469,21 +433,15 @@ function ThinkingIndicator({
 
   return (
     <div className="flex items-center gap-3">
-
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#6C63FF]/20 bg-[#6C63FF]/[0.07]">
-
         <div className="h-2 w-2 animate-pulse rounded-full bg-[#6C63FF] shadow-[0_0_10px_rgba(108,99,255,0.7)]" />
-
       </div>
 
       <div>
-
         <div className="text-xs font-medium text-[#B8BDC7]">
-
           {stage}
 
           <span className="ml-1 inline-flex text-[#6C63FF]">
-
             <span className="animate-pulse">
               .
             </span>
@@ -507,21 +465,16 @@ function ThinkingIndicator({
             >
               .
             </span>
-
           </span>
-
         </div>
 
         <div className="mt-1 text-[8px] uppercase tracking-[0.2em] text-[#454C57]">
           SentinelAI processing
         </div>
-
       </div>
-
     </div>
   );
 }
-
 
 // ======================================================
 // MAIN PAGE
@@ -549,6 +502,9 @@ export default function AskPage() {
   const [error, setError] =
     useState("");
 
+  const [initializing, setInitializing] =
+    useState(true);
+
   const messagesEndRef =
     useRef(null);
 
@@ -556,15 +512,159 @@ export default function AskPage() {
     useRef(null);
 
   // ======================================================
+  // RESTORE PERSISTENT SENTINEL CONVERSATION
+  // ======================================================
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function restoreConversation() {
+      try {
+        setInitializing(true);
+        setError("");
+
+        // Get the authenticated user's conversations.
+        const listResponse = await fetch(
+          "/api/conversations",
+          {
+            method: "GET",
+            cache: "no-store",
+          }
+        );
+
+        const listData =
+          await listResponse.json();
+
+        if (
+          !listResponse.ok ||
+          !listData.success
+        ) {
+          throw new Error(
+            listData.error ||
+              "Unable to restore Sentinel memory."
+          );
+        }
+
+        const conversations =
+          Array.isArray(
+            listData.conversations
+          )
+            ? listData.conversations
+            : [];
+
+        /*
+         * Sentinel uses ONE persistent chat window.
+         *
+         * We therefore select the most recently
+         * updated conversation instead of exposing
+         * a conversation picker to the user.
+         */
+        const existingConversation =
+          conversations[0];
+
+        // No conversation exists yet.
+        // The first message will create one
+        // through /api/ai.
+        if (!existingConversation) {
+          if (!cancelled) {
+            setConversationId(null);
+            setMessages([]);
+          }
+
+          return;
+        }
+
+        // Load the actual historical messages.
+        const conversationResponse =
+          await fetch(
+            `/api/conversations/${encodeURIComponent(
+              existingConversation.id
+            )}`,
+            {
+              method: "GET",
+              cache: "no-store",
+            }
+          );
+
+        const conversationData =
+          await conversationResponse.json();
+
+        if (
+          !conversationResponse.ok ||
+          !conversationData.success
+        ) {
+          throw new Error(
+            conversationData.error ||
+              "Unable to restore Sentinel conversation."
+          );
+        }
+
+        if (cancelled) {
+          return;
+        }
+
+        const restoredConversation =
+          conversationData.conversation;
+
+        const restoredMessages =
+          Array.isArray(
+            restoredConversation?.messages
+          )
+            ? restoredConversation.messages.map(
+                (message) => ({
+                  id: message.id,
+                  role: message.role,
+                  content: message.content,
+                })
+              )
+            : [];
+
+        setConversationId(
+          restoredConversation.id
+        );
+
+        setMessages(restoredMessages);
+      } catch (err) {
+        if (cancelled) {
+          return;
+        }
+
+        console.error(
+          "Restore Sentinel conversation error:",
+          err
+        );
+
+        setError(
+          err?.message ||
+            "Unable to restore Sentinel memory."
+        );
+      } finally {
+        if (!cancelled) {
+          setInitializing(false);
+        }
+      }
+    }
+
+    restoreConversation();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // ======================================================
   // AUTO SCROLL
   // ======================================================
 
   useEffect(() => {
-  messagesEndRef.current?.scrollIntoView({
-    behavior: "smooth",
-  });
-}, [messages, loading, displayedAnswer]);
-
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [
+    messages,
+    loading,
+    displayedAnswer,
+  ]);
 
   // ======================================================
   // THINKING STAGES
@@ -611,7 +711,6 @@ export default function AskPage() {
       }
     };
   }, [loading]);
-
 
   // ======================================================
   // SEND MESSAGE
@@ -676,56 +775,54 @@ export default function AskPage() {
       }
 
       if (data.conversationId) {
-  setConversationId(
-    data.conversationId
-  );
-}
+        setConversationId(
+          data.conversationId
+        );
+      }
 
-const answer = data.answer || "";
+      const answer = data.answer || "";
 
-setDisplayedAnswer("");
+      setDisplayedAnswer("");
 
-let index = 0;
+      let index = 0;
 
-const interval = setInterval(() => {
-  index += 2;
+      const interval = setInterval(() => {
+        index += 2;
 
-  setDisplayedAnswer(
-    answer.slice(0, index)
-  );
+        setDisplayedAnswer(
+          answer.slice(0, index)
+        );
 
-  if (index >= answer.length) {
-    clearInterval(interval);
+        if (index >= answer.length) {
+          clearInterval(interval);
 
-    setMessages((current) => [
-      ...current,
-      {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: answer,
-      },
-    ]);
+          setMessages((current) => [
+            ...current,
+            {
+              id: crypto.randomUUID(),
+              role: "assistant",
+              content: answer,
+            },
+          ]);
 
-    setDisplayedAnswer("");
-    setLoading(false);
-  }
-}, 15);
-
+          setDisplayedAnswer("");
+          setLoading(false);
+        }
+      }, 15);
     } catch (err) {
-  console.error(
-    "Ask Sentinel error:",
-    err
-  );
+      console.error(
+        "Ask Sentinel error:",
+        err
+      );
 
-  setError(
-    err?.message ||
-      "Something went wrong while contacting SentinelAI."
-  );
+      setError(
+        err?.message ||
+          "Something went wrong while contacting SentinelAI."
+      );
 
-  setLoading(false);
-}
+      setLoading(false);
+    }
   };
-
 
   // ======================================================
   // FORM
@@ -738,7 +835,6 @@ const interval = setInterval(() => {
 
     await sendMessage();
   };
-
 
   // ======================================================
   // KEYBOARD
@@ -754,7 +850,6 @@ const interval = setInterval(() => {
       sendMessage();
     }
   };
-
 
   // ======================================================
   // RETRY
@@ -781,38 +876,31 @@ const interval = setInterval(() => {
     );
   };
 
-
   // ======================================================
   // RENDER
   // ======================================================
 
   return (
     <div className="min-h-screen bg-[#050608] text-white">
-
       <Background />
 
       <Sidebar />
       <Topbar />
 
       <main className="relative min-h-screen pt-16 lg:ml-64">
-
         <div className="mx-auto flex min-h-[calc(100vh-64px)] max-w-6xl flex-col px-4 pb-36 pt-6 sm:px-6 lg:px-8">
-
 
           {/* ==================================================
               HEADER
           ================================================== */}
 
           <div className="mb-8">
-
             <div className="mb-2 flex items-center gap-2">
-
               <span className="h-1.5 w-1.5 rounded-full bg-[#6C63FF] shadow-[0_0_12px_rgba(108,99,255,0.8)]" />
 
               <span className="text-[9px] font-semibold uppercase tracking-[0.28em] text-[#8F88FF]">
                 INTELLIGENCE
               </span>
-
             </div>
 
             <h1 className="text-3xl font-semibold tracking-tight text-[#E1E3E8]">
@@ -823,304 +911,268 @@ const interval = setInterval(() => {
               Your security and development
               intelligence assistant.
             </p>
-
           </div>
 
+          {/* ==================================================
+              MEMORY RESTORATION
+          ================================================== */}
+
+          {initializing && (
+            <div className="flex flex-1 items-center justify-center">
+              <div className="flex items-center gap-3 rounded-xl border border-white/[0.07] bg-[#080A0D]/85 px-5 py-4 backdrop-blur-xl">
+                <div className="h-2 w-2 animate-pulse rounded-full bg-[#6C63FF] shadow-[0_0_12px_rgba(108,99,255,0.8)]" />
+
+                <span className="text-[9px] font-medium uppercase tracking-[0.18em] text-[#68707D]">
+                  Restoring Sentinel memory
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* ==================================================
               EMPTY STATE
           ================================================== */}
 
-          {messages.length === 0 && (
-            <div className="flex flex-1 flex-col">
+          {!initializing &&
+            messages.length === 0 && (
+              <div className="flex flex-1 flex-col">
+                <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#080A0D]/85 p-6 backdrop-blur-xl sm:p-8">
+                  <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-[#6C63FF]/[0.04] blur-3xl" />
 
-              <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#080A0D]/85 p-6 backdrop-blur-xl sm:p-8">
+                  <div className="relative">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#6C63FF]/20 bg-[#6C63FF]/[0.06]">
+                      <span className="text-lg text-[#8F88FF]">
+                        ✦
+                      </span>
+                    </div>
 
-                <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-[#6C63FF]/[0.04] blur-3xl" />
+                    <h2 className="mt-5 text-xl font-medium text-[#E1E3E8]">
+                      How can Sentinel help?
+                    </h2>
 
-                <div className="relative">
-
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#6C63FF]/20 bg-[#6C63FF]/[0.06]">
-
-                    <span className="text-lg text-[#8F88FF]">
-                      ✦
-                    </span>
-
+                    <p className="mt-2 max-w-xl text-sm leading-6 text-[#68707D]">
+                      Ask about code, debugging,
+                      application security,
+                      vulnerabilities, architecture,
+                      APIs, databases, or your
+                      SentinelAI workspace.
+                    </p>
                   </div>
-
-                  <h2 className="mt-5 text-xl font-medium text-[#E1E3E8]">
-                    How can Sentinel help?
-                  </h2>
-
-                  <p className="mt-2 max-w-xl text-sm leading-6 text-[#68707D]">
-                    Ask about code, debugging,
-                    application security,
-                    vulnerabilities, architecture,
-                    APIs, databases, or your
-                    SentinelAI workspace.
-                  </p>
-
                 </div>
 
-              </div>
+                {/* STARTER PROMPTS */}
 
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {STARTER_PROMPTS.map(
+                    (item) => (
+                      <button
+                        key={item.title}
+                        type="button"
+                        onClick={() =>
+                          sendMessage(
+                            item.prompt
+                          )
+                        }
+                        className="group rounded-xl border border-white/[0.07] bg-[#080A0D]/70 p-5 text-left backdrop-blur-xl transition hover:border-[#6C63FF]/25 hover:bg-[#6C63FF]/[0.03]"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-[#D7DAE0] transition group-hover:text-[#A8A3FF]">
+                              {item.title}
+                            </div>
 
-              {/* STARTER PROMPTS */}
-
-              <div className="mt-5 grid gap-3 sm:grid-cols-2">
-
-                {STARTER_PROMPTS.map(
-                  (item) => (
-                    <button
-                      key={item.title}
-                      type="button"
-                      onClick={() =>
-                        sendMessage(
-                          item.prompt
-                        )
-                      }
-                      className="group rounded-xl border border-white/[0.07] bg-[#080A0D]/70 p-5 text-left backdrop-blur-xl transition hover:border-[#6C63FF]/25 hover:bg-[#6C63FF]/[0.03]"
-                    >
-
-                      <div className="flex items-start justify-between">
-
-                        <div>
-
-                          <div className="text-sm font-medium text-[#D7DAE0] transition group-hover:text-[#A8A3FF]">
-                            {item.title}
+                            <div className="mt-1.5 text-xs leading-5 text-[#555D6B]">
+                              {item.description}
+                            </div>
                           </div>
 
-                          <div className="mt-1.5 text-xs leading-5 text-[#555D6B]">
-                            {item.description}
-                          </div>
-
+                          <span className="text-[#454C57] transition group-hover:translate-x-1 group-hover:text-[#6C63FF]">
+                            →
+                          </span>
                         </div>
-
-                        <span className="text-[#454C57] transition group-hover:translate-x-1 group-hover:text-[#6C63FF]">
-                          →
-                        </span>
-
-                      </div>
-
-                    </button>
-                  )
-                )}
-
+                      </button>
+                    )
+                  )}
+                </div>
               </div>
-
-            </div>
-          )}
-
+            )}
 
           {/* ==================================================
               CHAT
           ================================================== */}
 
-          {messages.length > 0 && (
-            <div className="flex-1 space-y-7">
+          {!initializing &&
+            messages.length > 0 && (
+              <div className="flex-1 space-y-7">
+                {messages.map(
+                  (message) => {
+                    const isUser =
+                      message.role ===
+                      "user";
 
-              {messages.map(
-                (message) => {
-
-                  const isUser =
-                    message.role ===
-                    "user";
-
-                  return (
-                    <div
-                      key={message.id}
-                      className={
-                        isUser
-                          ? "flex justify-end"
-                          : "flex justify-start"
-                      }
-                    >
-
+                    return (
                       <div
+                        key={message.id}
                         className={
                           isUser
-                            ? "max-w-3xl"
-                            : "w-full max-w-4xl"
+                            ? "flex justify-end"
+                            : "flex justify-start"
                         }
                       >
-
-                        {/* MESSAGE LABEL */}
-
                         <div
                           className={
                             isUser
-                              ? "mb-2 flex justify-end"
-                              : "mb-2 flex items-center gap-2"
+                              ? "max-w-3xl"
+                              : "w-full max-w-4xl"
                           }
                         >
+                          {/* MESSAGE LABEL */}
 
-                          {!isUser && (
+                          <div
+                            className={
+                              isUser
+                                ? "mb-2 flex justify-end"
+                                : "mb-2 flex items-center gap-2"
+                            }
+                          >
+                            {!isUser && (
+                              <div className="flex h-6 w-6 items-center justify-center rounded-md border border-[#6C63FF]/20 bg-[#6C63FF]/[0.06]">
+                                <span className="text-[10px] text-[#8F88FF]">
+                                  ✦
+                                </span>
+                              </div>
+                            )}
+
+                            <span
+                              className={
+                                isUser
+                                  ? "text-[8px] font-semibold uppercase tracking-[0.2em] text-[#555D6B]"
+                                  : "text-[8px] font-semibold uppercase tracking-[0.2em] text-[#6C63FF]"
+                              }
+                            >
+                              {isUser
+                                ? "YOU"
+                                : "SENTINELAI"}
+                            </span>
+                          </div>
+
+                          {/* MESSAGE */}
+
+                          <div
+                            className={
+                              isUser
+                                ? "rounded-2xl rounded-br-md border border-[#6C63FF]/20 bg-[#6C63FF]/[0.06] px-5 py-4"
+                                : "rounded-2xl rounded-bl-md border border-white/[0.07] bg-[#080A0D]/90 px-5 py-5 shadow-xl shadow-black/10"
+                            }
+                          >
+                            {isUser ? (
+                              <div className="whitespace-pre-wrap text-sm leading-6 text-[#D7DAE0]">
+                                {message.content}
+                              </div>
+                            ) : (
+                              <MessageContent
+                                content={
+                                  message.content
+                                }
+                              />
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                )}
+
+                {/* THINKING / RESPONSE ANIMATION */}
+
+                {loading && (
+                  <div className="flex justify-start">
+                    <div className="w-full max-w-4xl rounded-2xl rounded-bl-md border border-white/[0.07] bg-[#080A0D]/90 px-5 py-5 shadow-xl shadow-black/10">
+                      {displayedAnswer ? (
+                        <>
+                          {/* SENTINELAI LABEL */}
+
+                          <div className="mb-3 flex items-center gap-2">
                             <div className="flex h-6 w-6 items-center justify-center rounded-md border border-[#6C63FF]/20 bg-[#6C63FF]/[0.06]">
-
                               <span className="text-[10px] text-[#8F88FF]">
                                 ✦
                               </span>
-
                             </div>
-                          )}
 
-                          <span
-                            className={
-                              isUser
-                                ? "text-[8px] font-semibold uppercase tracking-[0.2em] text-[#555D6B]"
-                                : "text-[8px] font-semibold uppercase tracking-[0.2em] text-[#6C63FF]"
+                            <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-[#6C63FF]">
+                              SENTINELAI
+                            </span>
+                          </div>
+
+                          {/* ANIMATED RESPONSE */}
+
+                          <MessageContent
+                            content={
+                              displayedAnswer
                             }
-                          >
-                            {isUser
-                              ? "YOU"
-                              : "SENTINELAI"}
-                          </span>
+                          />
 
-                        </div>
+                          {/* CURSOR */}
 
-
-                        {/* MESSAGE */}
-
-                        <div
-                          className={
-                            isUser
-                              ? "rounded-2xl rounded-br-md border border-[#6C63FF]/20 bg-[#6C63FF]/[0.06] px-5 py-4"
-                              : "rounded-2xl rounded-bl-md border border-white/[0.07] bg-[#080A0D]/90 px-5 py-5 shadow-xl shadow-black/10"
+                          <span className="ml-1 inline-block h-4 w-[2px] animate-pulse bg-[#8F88FF] align-middle" />
+                        </>
+                      ) : (
+                        <ThinkingIndicator
+                          stageIndex={
+                            thinkingStage
                           }
-                        >
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
 
-                          {isUser ? (
-                            <div className="whitespace-pre-wrap text-sm leading-6 text-[#D7DAE0]">
-                              {message.content}
-                            </div>
-                          ) : (
-                            <MessageContent
-                              content={
-                                message.content
-                              }
-                            />
-                          )}
+                {/* ERROR */}
 
-                        </div>
+                {error && (
+                  <div className="max-w-4xl rounded-xl border border-red-500/20 bg-red-500/[0.04] p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-red-300">
+                          Sentinel Error
+                        </p>
 
+                        <p className="mt-1 text-xs leading-5 text-red-400/80">
+                          {error}
+                        </p>
                       </div>
 
+                      <button
+                        type="button"
+                        onClick={
+                          retryLastMessage
+                        }
+                        className="shrink-0 rounded-md border border-red-500/20 px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.12em] text-red-400 transition hover:bg-red-500/[0.08]"
+                      >
+                        Retry
+                      </button>
                     </div>
-                  );
-                }
-              )}
-
-
-              {/* THINKING / RESPONSE ANIMATION */}
-
-{loading && (
-  <div className="flex justify-start">
-
-    <div className="w-full max-w-4xl rounded-2xl rounded-bl-md border border-white/[0.07] bg-[#080A0D]/90 px-5 py-5 shadow-xl shadow-black/10">
-
-      {displayedAnswer ? (
-        <>
-          {/* SENTINELAI LABEL */}
-
-          <div className="mb-3 flex items-center gap-2">
-
-            <div className="flex h-6 w-6 items-center justify-center rounded-md border border-[#6C63FF]/20 bg-[#6C63FF]/[0.06]">
-
-              <span className="text-[10px] text-[#8F88FF]">
-                ✦
-              </span>
-
-            </div>
-
-            <span className="text-[8px] font-semibold uppercase tracking-[0.2em] text-[#6C63FF]">
-              SENTINELAI
-            </span>
-
-          </div>
-
-          {/* ANIMATED RESPONSE */}
-
-          <MessageContent
-            content={displayedAnswer}
-          />
-
-          {/* CURSOR */}
-
-          <span className="ml-1 inline-block h-4 w-[2px] animate-pulse bg-[#8F88FF] align-middle" />
-        </>
-      ) : (
-        <ThinkingIndicator
-          stageIndex={
-            thinkingStage
-          }
-        />
-      )}
-
-    </div>
-
-  </div>
-)}
-
-
-              {/* ERROR */}
-
-              {error && (
-                <div className="max-w-4xl rounded-xl border border-red-500/20 bg-red-500/[0.04] p-4">
-
-                  <div className="flex items-start justify-between gap-4">
-
-                    <div>
-
-                      <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-red-300">
-                        Sentinel Error
-                      </p>
-
-                      <p className="mt-1 text-xs leading-5 text-red-400/80">
-                        {error}
-                      </p>
-
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={
-                        retryLastMessage
-                      }
-                      className="shrink-0 rounded-md border border-red-500/20 px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.12em] text-red-400 transition hover:bg-red-500/[0.08]"
-                    >
-                      Retry
-                    </button>
-
                   </div>
+                )}
 
-                </div>
-              )}
-
-              <div ref={messagesEndRef} />
-
-            </div>
-          )}
-
+                <div ref={messagesEndRef} />
+              </div>
+            )}
         </div>
-
 
         {/* ==================================================
             INPUT BAR
         ================================================== */}
 
         <div className="fixed bottom-0 left-0 right-0 z-30 lg:left-64">
-
           <div className="mx-auto max-w-5xl px-4 pb-4 sm:px-6">
-
             <div className="rounded-2xl border border-white/[0.09] bg-[#050608]/95 p-2 shadow-2xl shadow-black/50 backdrop-blur-xl">
-
               <form
                 onSubmit={
                   handleSubmit
                 }
                 className="flex items-end gap-2"
               >
-
                 <textarea
                   value={input}
                   onChange={(event) =>
@@ -1133,7 +1185,10 @@ const interval = setInterval(() => {
                   }
                   placeholder="Ask Sentinel about code, security, debugging..."
                   rows={1}
-                  disabled={loading}
+                  disabled={
+                    loading ||
+                    initializing
+                  }
                   className="max-h-40 min-h-[48px] flex-1 resize-none bg-transparent px-3 py-3 text-sm text-[#E1E3E8] outline-none placeholder:text-[#454C57] disabled:cursor-not-allowed disabled:opacity-50"
                 />
 
@@ -1141,11 +1196,11 @@ const interval = setInterval(() => {
                   type="submit"
                   disabled={
                     loading ||
+                    initializing ||
                     !input.trim()
                   }
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#6C63FF]/30 bg-[#6C63FF]/10 text-[#A8A3FF] transition hover:border-[#6C63FF]/50 hover:bg-[#6C63FF]/20 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
                 >
-
                   {loading ? (
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-[#6C63FF]/20 border-t-[#8F88FF]" />
                   ) : (
@@ -1153,13 +1208,10 @@ const interval = setInterval(() => {
                       ↑
                     </span>
                   )}
-
                 </button>
-
               </form>
 
               <div className="flex items-center justify-between px-3 pb-1 pt-1">
-
                 <span className="text-[8px] uppercase tracking-[0.14em] text-[#363C46]">
                   SentinelAI Intelligence Engine
                 </span>
@@ -1167,17 +1219,11 @@ const interval = setInterval(() => {
                 <span className="text-[8px] text-[#363C46]">
                   Enter ↵ · Shift + Enter for new line
                 </span>
-
               </div>
-
             </div>
-
           </div>
-
         </div>
-
       </main>
-
     </div>
   );
 }
