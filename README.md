@@ -1,64 +1,87 @@
 # SentinelAI
 
-AI-Powered Security Intelligence for Developers
-SentinelAI is an AI-powered security intelligence platform that acts as an **AI Security Engineer** for developers.
-Modern developers can build applications faster than they can secure them. Security findings are often difficult to understand, prioritize, and remediate without specialized security expertise.
-SentinelAI addresses this gap by analyzing **authorized application security signals**, explaining risks in plain language, prioritizing what matters, and generating actionable remediation guidance.
+## AI-Powered Security Intelligence for Developers
 
-# Live Site
-**[Launch SentinelAI](https://sentinelai-defence.netlify.app/)**
+SentinelAI is an AI-powered security intelligence platform that acts as an AI Security Engineer for developers.
 
-✨ What SentinelAI Does
+Modern development teams can build applications faster than they can secure them. Security findings are often difficult to understand, prioritize, and remediate without specialized security expertise.
 
-SentinelAI transforms raw security information into understandable security intelligence.
-Instead of forcing developers to interpret complex security findings manually, SentinelAI helps developers:
+SentinelAI addresses this gap by analyzing authorized application security signals, explaining risks in plain language, prioritizing what matters, and generating actionable remediation guidance.
 
-- Analyze authorized security signals
-- Prioritize important findings
-- Understand security risks using AI
-- Ask security questions using Ask Sentinel
-- Generate actionable remediation guidance
-- Review security findings and reports
-- Organize security work into projects
-- Manage authenticated user accounts
-- Apply additional application security controls
+**Understand. Prioritize. Remediate.**
 
-The goal is simple:
-**Make security intelligence accessible to every developer.**
+---
 
-# Application Pages
+## Live Product
 
-# Dashboard
+**Production:**  
+https://sentinel-security-ai.vercel.app
 
-The Dashboard provides a centralized overview of the user's security workspace.
-It gives developers a quick way to understand the state of their projects and security findings without navigating through multiple systems.
+---
 
-- Dashboard features
-- Security overview
-- Project information
-- Finding visibility
-- Risk-oriented information
-- Quick access to major SentinelAI features
+## Problem
 
-# Projects
+Modern development workflows produce security information faster than many developers can interpret it.
 
-Projects are the main workspace inside SentinelAI.
+Security findings may contain:
 
-Developers can organize their security work by application or project.
+- Technical security terminology
+- Multiple severity levels
+- Large amounts of security information
+- Unclear remediation paths
+- Difficult prioritization decisions
 
-- Create projects
-- Manage project information
-- Associate security findings with projects
-- View project-specific security information
-- Maintain project ownership
+This creates a gap between:
 
-# Security Analysis
+**Building software quickly**
 
-Security Analysis is one of SentinelAI's core capabilities.
+and
 
-Users provide **authorized security signals**, and SentinelAI uses AI to analyze them.
+**Understanding what needs to be secured and fixed first.**
 
-The analysis converts security information into structured security intelligence, including information such as:
+Developers do not necessarily need more security noise. They need an intelligence layer that helps turn security signals into engineering decisions.
+
+---
+
+## Solution
+
+SentinelAI acts as an AI Security Engineer between security signals and engineering action.
+
+It helps developers understand:
+
+### What happened?
+
+Explain the security issue in understandable language.
+
+### Why does it matter?
+
+Describe the potential security impact.
+
+### How serious is it?
+
+Prioritize findings using severity and confidence information.
+
+### What should I do?
+
+Provide actionable remediation guidance.
+
+The goal is to transform:
+
+> Raw security information
+
+into:
+
+> Understandable, prioritized, developer-ready security intelligence.
+
+---
+
+## Core Capabilities
+
+### Security Analysis
+
+Submit authorized application security signals and have SentinelAI analyze them using AI.
+
+The resulting security intelligence can include:
 
 - Finding title
 - Severity
@@ -67,769 +90,560 @@ The analysis converts security information into structured security intelligence
 - Security impact
 - Remediation guidance
 
-# WORKFLOW
+### Findings
 
-Authorized Security Signal
+Centralized security finding management with:
 
-      ↓
+- Finding visibility
+- Severity information
+- Status information
+- Search
+- Severity filtering
+- Project filtering
+- Finding explanations
+- Remediation guidance
 
-  SentinelAI API
+### Projects
 
-      ↓
+Organize security work by application or project.
 
-  AI Analysis
+Projects provide:
 
-      ↓
+- Project creation
+- Project management
+- Project-specific findings
+- Project security information
+- Server-side ownership enforcement
 
-   Structured Finding
+### Reports
 
-      ↓
+Reports provide a higher-level view of a project's security posture, including:
 
-Severity + Confidence
+- Finding summaries
+- Severity distribution
+- Risk-oriented information
+- Project security information
 
-      ↓
+### Ask Sentinel
 
-  Explanation
+Ask Sentinel is the AI Security Engineer interface.
 
-      ↓
+Developers can ask questions such as:
 
-Remediation Guidance
+- What are the highest-risk findings?
+- Explain this security issue in simple terms.
+- How should I remediate this finding?
+- What should I fix first?
 
-This helps developers move from:
+Relevant project and finding context can be used when answering security questions.
 
-"Something looks wrong"
+### Persistent Sentinel Memory
 
-to:
+Ask Sentinel supports persistent conversations.
 
-"This is the issue, this is how serious it is, this is why it matters, and this is what I should do next."
+Conversations and messages are stored so that the latest conversation can be restored when the user returns.
 
----
+The persistence flow is:
 
-🚨 Findings
-
-The Findings page provides a centralized view of identified security issues.
-
-Developers can inspect findings and understand which issues deserve attention.
-
-Finding features
-
-Security finding list
-
-Severity information
-
-Status information
-
-Search
-
-Severity filtering
-
-Project-based filtering
-
-Finding explanations
-
-Remediation guidance
-
-SentinelAI focuses on helping developers prioritize **what matters most** rather than overwhelming them with raw security output.
-
----
-
-📄 Reports
-
-The Reports page converts project security information into a higher-level security overview.
-
-Reports help developers understand the overall security posture of a project.
-
-Report features
-
-Project security information
-
-Finding summaries
-
-Severity distribution
-
-Risk-oriented information
-
-Security overview
-
-Reports are scoped to the authenticated user's projects.
-
----
-
-🧠 Ask Sentinel
-
-Ask Sentinel is SentinelAI's AI Security Engineer interface.
-
-Developers can communicate directly with SentinelAI and ask questions about their security workspace.
-
-Example questions:
-
-"What are the highest-risk findings?"
-
-"Explain this security issue in simple terms."
-
-"How should I remediate this finding?"
-
-"What should I fix first?"
-
-SentinelAI can use relevant project and finding context when answering security questions.
-
----
-
-🧠 Persistent Sentinel Memory
-
-Ask Sentinel includes persistent conversation memory.
-
-Instead of losing the conversation when the page is refreshed, SentinelAI stores conversations and messages and restores the latest conversation when the user returns.
-
-Memory flow
-
-User sends message
-
-   ↓
-
-Conversation stored
-
-   ↓
-
-AI response stored
-
-   ↓
-
-User refreshes page
-
-   ↓
-
-Sentinel restores conversation
-
-   ↓
-
-Previous context appears
+```text
+User Message
+     |
+     v
+Conversation Stored
+     |
+     v
+AI Response Stored
+     |
+     v
+User Returns
+     |
+     v
+Conversation Restored
+     |
+     v
+Previous Context Available
+```
 
 Conversation ownership is enforced server-side so users can only access their own conversations.
 
----
+### Settings
 
-⚙️ Settings
+SentinelAI provides authenticated account and application settings, including:
 
-The Settings section provides account and application preferences.
+- Account information
+- Password management
+- Application preferences
+- Account deletion
+- User-specific configuration
 
-Settings features
-
-Account information
-
-Password management
-
-Application preferences
-
-Account deletion
-
-User-specific configuration
-
-Sensitive operations require authentication and validation.
+Sensitive account operations require authentication and validation.
 
 ---
 
-🔐 Authentication & Application Security
+## How SentinelAI Works
+
+```text
+Authorized Security Signal
+          |
+          v
+     SentinelAI API
+          |
+          v
+    Authentication
+          |
+          v
+       Validation
+          |
+          v
+       Groq AI
+          |
+          v
+  Structured Analysis
+          |
+          +------------------+
+          |                  |
+          v                  v
+   Finding Data       Remediation
+          |                  |
+          +--------+---------+
+                   |
+                   v
+             PostgreSQL
+                Neon
+                   |
+                   v
+             SentinelAI UI
+```
+
+The system is designed to move developers from:
+
+```text
+"Something looks wrong."
+```
+
+to:
+
+```text
+"This is the issue,
+this is how serious it is,
+this is why it matters,
+and this is what I should do next."
+```
+
+---
+
+## Architecture
+
+```text
+                    +------------------+
+                    |    Developer     |
+                    +--------+---------+
+                             |
+                             v
+                    +------------------+
+                    |    SentinelAI     |
+                    |    Next.js App    |
+                    +--------+---------+
+                             |
+             +---------------+---------------+
+             |               |               |
+             v               v               v
+      +------------+   +------------+   +------------+
+      |   Auth.js  |   | AI Engine  |   | PostgreSQL |
+      |            |   |   Groq     |   |    Neon    |
+      +------------+   +------------+   +------------+
+                             |
+                             v
+                    +------------------+
+                    |  Security Layer  |
+                    |     Aikido       |
+                    +------------------+
+```
+
+### Application Layers
+
+**Client**
+
+- Next.js
+- React
+- Tailwind-style utility classes
+
+**Application**
+
+- Next.js API routes
+- Server-side application logic
+- Authentication
+- Project and finding management
+
+**AI**
+
+- Groq
+- `openai/gpt-oss-20b`
+
+**Data**
+
+- PostgreSQL
+- Neon
+- Prisma
+
+**Authentication**
+
+- Auth.js / NextAuth
+- Credentials authentication
+- bcryptjs password hashing
+
+**Security**
+
+- Aikido Security
+- Authentication and authorization controls
+- Server-side ownership checks
+- Input validation
+- Input length limits
+- Safe API error responses
+
+**Deployment**
+
+- Vercel
+
+**Version Control**
+
+- Git
+- GitHub
+
+---
+
+## Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16.3.3 |
+| Frontend | React 19 |
+| Styling | Tailwind-style utility classes |
+| Backend | Next.js API Routes |
+| Authentication | Auth.js / NextAuth |
+| Password Hashing | bcryptjs |
+| Database | PostgreSQL |
+| Database Hosting | Neon |
+| ORM | Prisma 7.10.0 |
+| AI Platform | Groq |
+| AI Model | `openai/gpt-oss-20b` |
+| Application Security | Aikido Security |
+| Deployment | Vercel |
+| Version Control | Git / GitHub |
+
+---
+
+## Project Structure
+
+```text
+sentinel-ai/
+|
+├── app/
+│   ├── ask/
+│   ├── analysis/
+│   ├── dashboard/
+│   ├── findings/
+│   ├── projects/
+│   ├── reports/
+│   ├── settings/
+│   │
+│   └── api/
+│       ├── ai/
+│       ├── analyze/
+│       ├── conversations/
+│       ├── findings/
+│       ├── projects/
+│       ├── reports/
+│       ├── settings/
+│       └── register/
+│
+├── component/
+│
+├── lib/
+│   └── prisma.js
+│
+├── prisma/
+│   ├── schema.prisma
+│   └── migrations/
+│
+├── public/
+│
+├── auth.js
+├── proxy.js
+├── prisma.config.ts
+├── next.config.mjs
+├── package.json
+└── README.md
+```
+
+---
+
+## Authentication and Security
 
 SentinelAI uses authenticated user sessions and server-side ownership checks.
 
 Security-sensitive APIs verify the authenticated user before accessing protected resources.
 
-The application includes:
+Application security controls include:
 
-Authentication
+- Authentication
+- Protected routes
+- Project ownership enforcement
+- Conversation ownership enforcement
+- Input validation
+- Input length limits
+- Safe API error responses
+- Password hashing
+- Authenticated account operations
+- Additional application security controls
 
-Protected routes
+Aikido Security is integrated as an additional application security layer.
 
-User ownership checks
-
-Input validation
-
-Input length limits
-
-Safe API error responses
-
-Project ownership enforcement
-
-Conversation ownership enforcement
-
-Password hashing
-
-Additional application security controls
-
-SentinelAI also integrates **Aikido Security** as an additional application security layer.
+SentinelAI is intentionally designed around authorized security analysis and user-specific data isolation.
 
 ---
 
-🤖 How AI Is Used
-
-SentinelAI follows an **AI-first development philosophy**.
-
-AI was used throughout the product lifecycle rather than only for code autocomplete.
-
-Idea
-
- ↓
-
-Product Definition
-
- ↓
-
-Architecture
-
- ↓
-
-UI / UX
-
- ↓
-
-Implementation
-
- ↓
-
-Debugging
-
- ↓
-
-Testing
-
- ↓
-
-Security Review
-
- ↓
-
-Deployment
-
- ↓
-
-Documentation
-
-AI was used to assist with:
-
-Product ideation
-
-Feature planning
-
-Application architecture
-
-UI/UX design
-
-Frontend implementation
-
-Backend implementation
-
-Database design
-
-API development
-
-AI integration
-
-Debugging
-
-Testing
-
-Security review
-
-Deployment
-
-Documentation
-
-Human involvement focused on:
-
-Product direction
-
-Requirements
-
-Decision making
-
-Validation
-
-Testing
-
-Refinement
-
-Final decisions
-
----
-
-🧰 AI & Development Tools
-
----
-
-🏗️ Technology Stack
-
-Frontend
-
-Next.js 16.3.3
-
-React
-
-Tailwind-style utility classes
-
-Backend
-
-Next.js API routes
-
-Server-side application logic
-
-Authentication
-
-Auth.js / NextAuth
-
-Credentials authentication
-
-bcryptjs password hashing
-
-Database
-
-PostgreSQL
-
-Neon
-
-ORM
-
-Prisma 7.10.0
-
-AI
-
-Groq
-
-`openai/gpt-oss-20b`
-
-Security
-
-Aikido Security
-
-Deployment
-
-Netlify
-
-Version Control
-
-Git
-
-GitHub
-
----
-
-🏛️ Architecture
-
-                     ┌──────────────────┐
-
-                     │     Developer    │
-
-                     └────────┬─────────┘
-
-                              │
-
-                              ▼
-
-                     ┌──────────────────┐
-
-                     │    SentinelAI    │
-
-                     │   Next.js App    │
-
-                     └────────┬─────────┘
-
-                              │
-
-          ┌───────────────────┼───────────────────┐
-
-          │                   │                   │
-
-          ▼                   ▼                   ▼
-
-   ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-
-   │   Auth.js   │     │  AI Engine  │     │ PostgreSQL  │
-
-   │             │     │    Groq     │     │    Neon     │
-
-   └─────────────┘     └─────────────┘     └─────────────┘
-
-                              │
-
-                              ▼
-
-                     ┌──────────────────┐
-
-                     │ Security Layer   │
-
-                     │     Aikido       │
-
-                     └──────────────────┘
-
----
-
-🔄 Security Analysis Architecture
-
-             Authorized Security Data
-
-                       │
-
-                       ▼
-
-                SentinelAI API
-
-                       │
-
-                Authentication
-
-                       │
-
-                       ▼
-
-                  Validation
-
-                       │
-
-                       ▼
-
-                 Groq AI Model
-
-                       │
-
-                       ▼
-
-              Structured Analysis
-
-                       │
-
-         ┌─────────────┴─────────────┐
-
-         ▼                           ▼
-
-    Finding Data              Remediation
-
-         │                           │
-
-         └─────────────┬─────────────┘
-
-                       ▼
-
-                PostgreSQL / Neon
-
-                       │
-
-                       ▼
-
-                 SentinelAI UI
-
----
-
-💬 Conversation Architecture
-
-SentinelAI stores conversations and messages in PostgreSQL.
-
-User
-
- │
-
- └── Conversation
-
-   │
-
-   ├── User Message
-
-   ├── Sentinel Response
-
-   ├── User Message
-
-   ├── Sentinel Response
-
-   └── ...
-
-Each conversation belongs to a specific authenticated user.
-
-When Ask Sentinel loads, the application retrieves the user's latest conversation and restores its messages.
-
----
-
-📦 Project Structure
-
-sentinel-ai/
-
-│
-
-├── app/
-
-│   ├── ask/
-
-│   ├── analysis/
-
-│   ├── dashboard/
-
-│   ├── findings/
-
-│   ├── projects/
-
-│   ├── reports/
-
-│   ├── settings/
-
-│   │
-
-│   └── api/
-
-│       ├── ai/
-
-│       ├── analyze/
-
-│       ├── conversations/
-
-│       ├── findings/
-
-│       ├── projects/
-
-│       ├── reports/
-
-│       ├── settings/
-
-│       └── register/
-
-│
-
-├── components/
-
-│
-
-├── lib/
-
-│   └── prisma.js
-
-│
-
-├── prisma/
-
-│   ├── schema.prisma
-
-│   └── migrations/
-
-│
-
-├── public/
-
-│
-
-├── auth.js
-
-├── proxy.js
-
-├── prisma.config.ts
-
-├── next.config.mjs
-
-├── package.json
-
-└── README.md
-
----
-
-🧪 Development & Testing
-
-SentinelAI was tested throughout development using:
-
-Production builds
-
-Development runtime testing
-
-API endpoint testing
-
-Authentication testing
-
-Database persistence testing
-
-Conversation persistence testing
-
-Project ownership validation
-
-Findings validation
-
-Report validation
-
-Settings validation
-
-Deployment verification
-
-The application is designed to maintain user-specific data isolation through server-side ownership checks.
-
----
-
-🚀 Deployment
-
-SentinelAI uses a GitHub → Netlify deployment workflow.
-
-Developer
-
-│
-
-▼
-
-   Git
-
-│
-
-▼
-
-GitHub main
-
-│
-
-▼
-
- Netlify
-
-│
-
-▼
-
-Production
-
-Changes pushed to the main branch can trigger the production deployment workflow.
-
----
-
-🎯 Target Users
-
-SentinelAI is designed primarily for:
-
-Developers
-
-Indie hackers
-
-Startups
-
-Small engineering teams
-
-Security-conscious development teams
-
-Teams without dedicated security expertise
-
-The long-term vision is to make practical security intelligence available without requiring every developer to become a security specialist.
-
----
-
-💡 The Problem
-
-Modern development tools allow applications to be built extremely quickly.
-
-Security workflows have not always kept the same pace.
-
-Developers may receive security findings containing:
-
-Technical terminology
-
-Multiple severity levels
-
-Large amounts of security data
-
-Unclear remediation paths
-
-Difficult prioritization decisions
-
-This creates a gap between:
-
-**Building software quickly**
-
-and
-
-**Understanding whether it is secure.**
-
----
-
-🛡️ The SentinelAI Solution
-
-SentinelAI closes this gap by acting as an AI security engineer.
-
-Instead of simply displaying security findings, SentinelAI helps developers understand:
-
-What happened?
-
-Explain the security issue.
-
-Why does it matter?
-
-Describe the potential impact.
-
-How serious is it?
-
-Prioritize the finding.
-
-What should I do?
-
-Provide actionable remediation guidance.
-
----
-
-🌟 Product Vision
-
-SentinelAI's long-term vision is to become an AI-native security engineering layer for modern software development.
-
-Developer
-
-↓
-
-Build
-
-↓
-
-Security Signals
-
-↓
-
-SentinelAI
-
-↓
-
-Understand
-
-↓
-
-Prioritize
-
-↓
-
-Remediate
-
-↓
-
-Ship with Confidence
-
----
-
-🏆 HackIndia Project
-
-SentinelAI was created for the:
-
-**HackIndia — AI-First Startup Hackathon 2026**
-
-The project follows an AI-first development philosophy by using AI throughout product ideation, architecture, UI/UX, implementation, debugging, testing, security review, deployment and documentation.
-
-The detailed AI development process is documented separately in the:
-
-**SentinelAI AI Usage & Development Report**
-
----
-
-📎 Project Links
-
----
-
-⚠️ Responsible Use
+## Responsible Use
 
 SentinelAI is intended for **authorized security analysis**.
 
 Users should only analyze applications, systems, and security data that they have permission to test or access.
 
-SentinelAI is designed to assist security understanding and remediation, not to replace responsible security practices.
+SentinelAI is designed to assist security understanding and remediation. It does not replace responsible security practices, security professionals, or appropriate authorization procedures.
 
 ---
 
-👥 Team
+## AI-First Development
 
-Ghost Shell
+SentinelAI was developed following an AI-first development philosophy.
+
+AI was used throughout the product lifecycle rather than only for code completion.
+
+The development workflow included:
+
+```text
+Idea
+  |
+  v
+Product Definition
+  |
+  v
+Architecture
+  |
+  v
+UI / UX
+  |
+  v
+Implementation
+  |
+  v
+Debugging
+  |
+  v
+Testing
+  |
+  v
+Security Review
+  |
+  v
+Deployment
+  |
+  v
+Documentation
+```
+
+AI was used to assist with:
+
+- Product ideation
+- Feature planning
+- Application architecture
+- UI/UX design
+- Frontend implementation
+- Backend implementation
+- Database design
+- API development
+- AI integration
+- Debugging
+- Testing
+- Security review
+- Deployment
+- Documentation
+
+Human involvement focused on:
+
+- Product direction
+- Requirements
+- Decision making
+- Validation
+- Testing
+- Refinement
+- Final decisions
+
+The project follows an iterative AI-assisted workflow in which generated work was reviewed, tested, refined, and validated against the running application.
+
+---
+
+## Development and Testing
+
+SentinelAI was validated throughout development using:
+
+- Production builds
+- Development runtime testing
+- API endpoint testing
+- Authentication testing
+- Database persistence testing
+- Conversation persistence testing
+- Project ownership validation
+- Findings validation
+- Report validation
+- Settings validation
+- Deployment verification
+
+The production application was built and deployed through the GitHub and Vercel workflow.
+
+---
+
+## Deployment
+
+The production deployment workflow is:
+
+```text
+Developer
+    |
+    v
+   Git
+    |
+    v
+GitHub main
+    |
+    v
+  Vercel
+    |
+    v
+Production
+```
+
+Production application:
+
+https://sentinel-security-ai.vercel.app
+
+---
+
+## Target Users
+
+SentinelAI is designed primarily for:
+
+- Developers
+- Indie hackers
+- Startups
+- Small engineering teams
+- Security-conscious development teams
+- Teams without dedicated security expertise
+
+The long-term objective is to make practical security intelligence more accessible without requiring every developer to become a security specialist.
+
+---
+
+## Product Vision
+
+SentinelAI's long-term vision is to become an AI-native security engineering layer for modern software development.
+
+```text
+Developer
+    |
+    v
+   Build
+    |
+    v
+Security Signals
+    |
+    v
+SentinelAI
+    |
+    v
+Understand
+    |
+    v
+Prioritize
+    |
+    v
+Remediate
+    |
+    v
+Ship with Confidence
+```
+
+---
+
+## Roadmap
+
+### Current
+
+- AI security analysis
+- Security findings
+- Project workspace
+- Security reports
+- Ask Sentinel
+- Persistent conversations
+- Authentication
+- User-specific data isolation
+- Application security controls
+- Production deployment
+
+### Next
+
+- GitHub integration
+- CI/CD security workflows
+- Richer security-data imports
+- Engineering workflow integrations
+
+### Future
+
+- Continuous security monitoring
+- Automated security workflows
+- Broader application security intelligence
+- AI-native security engineering platform
+
+The roadmap represents planned product direction and does not describe currently available functionality unless listed under the current section.
+
+---
+
+## HackIndia
+
+SentinelAI was created for the:
+
+**HackIndia — AI-First Startup Hackathon 2026**
+
+The project follows an AI-first development approach across:
+
+- Ideation
+- Product definition
+- Architecture
+- UI/UX
+- Implementation
+- Debugging
+- Testing
+- Security review
+- Deployment
+- Documentation
+
+The project's AI development process is documented separately in the AI Usage & Development Report.
+
+---
+
+## Project Links
+
+| Resource | Link |
+|---|---|
+| Live Product | https://sentinel-security-ai.vercel.app |
+| GitHub Repository | https://github.com/HackIndiaXYZ/ai-first-startup-hackathon-build-a-startup-using-ai-only-sentinelai |
+| AI Usage Report | https://github.com/HackIndiaXYZ/ai-first-startup-hackathon-build-a-startup-using-ai-only-sentinelai/docs/SentinelAI_AI_Usage_and_Development_Report.pdf |
+| Pitch Deck | https://github.com/HackIndiaXYZ/ai-first-startup-hackathon-build-a-startup-using-ai-only-sentinelai/docs/sentinel_ai_pitch_deck.pdf |
+| Demo Video | https://github.com/HackIndiaXYZ/ai-first-startup-hackathon-build-a-startup-using-ai-only-sentinelai/docs/sentinel-ai-demo.mp4 |
+
+---
+
+## Team
 
 **SentinelAI**
 
@@ -837,72 +651,18 @@ Built for the HackIndia AI-First Startup Hackathon 2026.
 
 ---
 
-📜 License
+## License
 
-Add the project's chosen license here before public release.
+This project is licensed under the MIT License.
 
-Project Links — Editable Table
+See the `LICENSE` file for the complete license text.
 
-Resource
-	
+---
 
-URL
-	
+## Disclaimer
 
-Notes
+SentinelAI is a security intelligence and remediation-assistance platform.
 
-🌐 Live Demo
-	
+The system should only be used with applications, systems, and security information for which the user has appropriate authorization.
 
-PASTE LINK HERE
-	
-
-Production application
-
-💻 GitHub Repository
-	
-
-PASTE LINK HERE
-	
-
-Source code
-
-📖 AI Usage Report
-	
-
-PASTE LINK HERE
-	
-
-AI-first development documentation
-
-🎥 Demo Video
-	
-
-PASTE LINK HERE
-	
-
-3–5 minute product demonstration
-
-🏆 HackIndia Project Page
-	
-
-PASTE LINK HERE
-	
-
-Hackathon submission/team page
-
-📊 Pitch Deck
-	
-
-PASTE LINK HERE
-	
-
-Presentation for judges
-
-🌍 Project Website
-	
-
-PASTE LINK HERE
-	
-
-Optional project/landing website
+Security recommendations generated by AI should be reviewed and validated by qualified developers or security professionals before being applied to production systems.
