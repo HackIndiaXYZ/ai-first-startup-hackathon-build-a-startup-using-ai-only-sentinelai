@@ -12,19 +12,27 @@ import Background from "@/component/Background";
    UI primitives
 ───────────────────────────────────────────── */
 
-function SettingsCard({ eyebrow, title, description, children, danger = false }) {
+function SettingsCard({
+  eyebrow,
+  title,
+  description,
+  children,
+  danger = false,
+}) {
   return (
     <section
       className={[
-        "overflow-hidden rounded-2xl border backdrop-blur-sm",
+        "overflow-hidden rounded-2xl border",
+        "shadow-[0_20px_60px_rgba(0,0,0,0.20)]",
+        "backdrop-blur-xl",
         danger
-          ? "border-red-400/15 bg-red-400/[0.025]"
+          ? "border-red-400/15 bg-red-400/[0.025] shadow-[0_12px_40px_rgba(248,113,113,0.04)]"
           : "border-white/[0.08] bg-white/[0.025]",
       ].join(" ")}
     >
       <div
         className={[
-          "border-b px-5 py-4 sm:px-6",
+          "border-b px-4 py-4 sm:px-6 sm:py-5",
           danger
             ? "border-red-400/10"
             : "border-white/[0.07]",
@@ -33,7 +41,7 @@ function SettingsCard({ eyebrow, title, description, children, danger = false })
         {eyebrow && (
           <p
             className={[
-              "text-[10px] font-semibold uppercase tracking-[0.22em]",
+              "text-[9px] font-bold uppercase tracking-[0.24em]",
               danger
                 ? "text-red-300/60"
                 : "text-cyan-300/55",
@@ -43,18 +51,20 @@ function SettingsCard({ eyebrow, title, description, children, danger = false })
           </p>
         )}
 
-        <h2 className="mt-1 text-base font-semibold tracking-tight text-white">
+        <h2 className="mt-1 text-base font-semibold tracking-tight text-white sm:text-[17px]">
           {title}
         </h2>
 
         {description && (
-          <p className="mt-1 max-w-2xl text-xs leading-5 text-white/35">
+          <p className="mt-1 max-w-2xl text-xs leading-5 text-white/35 sm:text-[13px]">
             {description}
           </p>
         )}
       </div>
 
-      <div className="p-5 sm:p-6">{children}</div>
+      <div className="p-4 sm:p-6">
+        {children}
+      </div>
     </section>
   );
 }
@@ -68,23 +78,26 @@ function SettingRow({
   return (
     <div
       className={[
-        "flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between",
+        "flex min-w-0 flex-col gap-3 py-4",
+        "sm:flex-row sm:items-center sm:justify-between sm:gap-6",
         !last ? "border-b border-white/[0.06]" : "",
       ].join(" ")}
     >
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="text-sm font-medium text-white/85">
           {title}
         </p>
 
         {description && (
-          <p className="mt-1 max-w-xl text-xs leading-5 text-white/35">
+          <p className="mt-1 w-full max-w-xl break-words text-xs leading-5 text-white/35">
             {description}
           </p>
         )}
       </div>
 
-      <div className="shrink-0">{children}</div>
+      <div className="w-full min-w-0 sm:w-44 sm:shrink-0">
+        {children}
+      </div>
     </div>
   );
 }
@@ -94,11 +107,12 @@ function Input({ className = "", ...props }) {
     <input
       {...props}
       className={[
-        "w-full rounded-xl border border-white/[0.09]",
-        "bg-black/30 px-3.5 py-2.5 text-sm text-white",
-        "outline-none transition",
+        "w-full min-w-0 rounded-xl border border-white/[0.09]",
+        "bg-white/[0.025] px-3.5 py-2.5 text-sm text-white",
+        "outline-none transition-all duration-200",
         "placeholder:text-white/20",
-        "focus:border-cyan-400/30 focus:bg-white/[0.025]",
+        "hover:border-white/[0.14]",
+        "focus:border-cyan-400/40 focus:bg-cyan-400/[0.025]",
         "disabled:cursor-not-allowed disabled:opacity-50",
         className,
       ].join(" ")}
@@ -106,13 +120,27 @@ function Input({ className = "", ...props }) {
   );
 }
 
-function Select({ value, onChange, options, disabled = false }) {
+function Select({
+  value,
+  onChange,
+  options,
+  disabled = false,
+}) {
   return (
     <select
       value={value}
-      onChange={(event) => onChange(event.target.value)}
+      onChange={(event) =>
+        onChange(event.target.value)
+      }
       disabled={disabled}
-      className="min-w-[150px] rounded-xl border border-white/[0.09] bg-black/30 px-3.5 py-2.5 text-sm text-white outline-none transition focus:border-cyan-400/30 disabled:cursor-not-allowed disabled:opacity-50"
+      className={[
+        "w-full min-w-0 rounded-xl border border-white/[0.09]",
+        "bg-white/[0.025] px-3.5 py-2.5 text-sm text-white",
+        "outline-none transition-all duration-200",
+        "hover:border-white/[0.14]",
+        "focus:border-cyan-400/40 focus:bg-cyan-400/[0.025]",
+        "disabled:cursor-not-allowed disabled:opacity-50",
+      ].join(" ")}
     >
       {options.map((option) => (
         <option
@@ -127,7 +155,11 @@ function Select({ value, onChange, options, disabled = false }) {
   );
 }
 
-function Toggle({ checked, onChange, disabled = false }) {
+function Toggle({
+  checked,
+  onChange,
+  disabled = false,
+}) {
   return (
     <button
       type="button"
@@ -136,18 +168,21 @@ function Toggle({ checked, onChange, disabled = false }) {
       onClick={() => onChange(!checked)}
       disabled={disabled}
       className={[
-        "relative h-6 w-11 rounded-full border transition-all",
+        "relative h-6 w-11 shrink-0 rounded-full border",
+        "transition-all duration-200",
         checked
           ? "border-cyan-400/30 bg-cyan-400/20"
           : "border-white/10 bg-white/[0.06]",
         disabled
           ? "cursor-not-allowed opacity-50"
-          : "cursor-pointer",
+          : "cursor-pointer hover:border-white/20",
       ].join(" ")}
     >
       <span
         className={[
-          "absolute top-1/2 h-4 w-4 -translate-y-1/2 rounded-full transition-all",
+          "absolute top-1/2 h-4 w-4",
+          "-translate-y-1/2 rounded-full",
+          "transition-all duration-200",
           checked
             ? "left-[22px] bg-cyan-300 shadow-[0_0_12px_rgba(103,232,249,0.45)]"
             : "left-[2px] bg-white/30",
@@ -169,10 +204,21 @@ function ActionButton({
       onClick={onClick}
       disabled={disabled}
       className={[
-        "rounded-xl border px-4 py-2.5 text-sm font-medium transition",
+        "w-full rounded-xl border px-4 py-2.5",
+        "text-sm font-medium",
+        "transition-all duration-200",
+        "active:scale-[0.98]",
+        "sm:w-auto",
         danger
-          ? "border-red-400/20 bg-red-400/[0.06] text-red-200 hover:bg-red-400/[0.12]"
-          : "border-cyan-400/20 bg-cyan-400/[0.08] text-cyan-200 hover:bg-cyan-400/[0.13]",
+          ? [
+              "border-red-400/20 bg-red-400/[0.06] text-red-200",
+              "hover:border-red-400/30 hover:bg-red-400/[0.12]",
+            ].join(" ")
+          : [
+              "border-cyan-400/20 bg-cyan-400/[0.08] text-cyan-200",
+              "hover:border-cyan-400/30 hover:bg-cyan-400/[0.13]",
+              "hover:shadow-[0_0_24px_rgba(34,211,238,0.08)]",
+            ].join(" "),
         "disabled:cursor-not-allowed disabled:opacity-40",
       ].join(" ")}
     >
@@ -195,13 +241,22 @@ function SettingsNav({ active, onChange }) {
   ];
 
   return (
-    <nav className="lg:sticky lg:top-24 lg:self-start">
-      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-2">
-        <p className="px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/25">
-          Settings
-        </p>
+    <nav className="min-w-0 lg:sticky lg:top-24 lg:self-start">
+      <div
+        className={[
+          "rounded-2xl border border-white/[0.08]",
+          "bg-[#080A0D]/75 p-1.5",
+          "shadow-[0_12px_40px_rgba(0,0,0,0.25)]",
+          "backdrop-blur-xl",
+        ].join(" ")}
+      >
+        <div className="mb-1 hidden px-3 py-2 lg:block">
+          <p className="text-[9px] font-bold uppercase tracking-[0.24em] text-white/25">
+            Settings
+          </p>
+        </div>
 
-        <div className="flex gap-1 overflow-x-auto lg:block">
+        <div className="flex gap-1 overflow-x-auto scrollbar-none lg:block">
           {items.map(([id, label]) => {
             const selected = active === id;
 
@@ -211,18 +266,29 @@ function SettingsNav({ active, onChange }) {
                 type="button"
                 onClick={() => onChange(id)}
                 className={[
-                  "whitespace-nowrap rounded-xl px-3 py-2.5 text-left text-sm transition lg:w-full",
+                  "group relative shrink-0 whitespace-nowrap rounded-xl",
+                  "px-3 py-2.5 text-left text-xs font-medium",
+                  "transition-all duration-200",
+                  "lg:flex lg:w-full lg:items-center",
                   selected
-                    ? "bg-cyan-400/[0.08] text-cyan-200"
-                    : "text-white/45 hover:bg-white/[0.04] hover:text-white/80",
+                    ? [
+                        "bg-cyan-400/[0.10] text-cyan-200",
+                        "shadow-[inset_0_0_20px_rgba(34,211,238,0.04)]",
+                      ].join(" ")
+                    : [
+                        "text-white/40",
+                        "hover:bg-white/[0.04]",
+                        "hover:text-white/80",
+                      ].join(" "),
                 ].join(" ")}
               >
                 <span
                   className={[
-                    "mr-2 inline-block h-1.5 w-1.5 rounded-full align-middle",
+                    "mr-2 inline-block h-1.5 w-1.5 rounded-full",
+                    "transition-all duration-200",
                     selected
-                      ? "bg-cyan-300 shadow-[0_0_8px_rgba(103,232,249,0.6)]"
-                      : "bg-white/15",
+                      ? "bg-cyan-300 shadow-[0_0_10px_rgba(103,232,249,0.8)]"
+                      : "bg-white/15 group-hover:bg-white/30",
                   ].join(" ")}
                 />
 
@@ -235,6 +301,10 @@ function SettingsNav({ active, onChange }) {
     </nav>
   );
 }
+
+/* ─────────────────────────────────────────────
+   Account
+───────────────────────────────────────────── */
 
 /* ─────────────────────────────────────────────
    Account
@@ -436,8 +506,14 @@ function AppearanceSettings({ showToast }) {
             onChange={setTheme}
             disabled={loading || saving}
             options={[
-              { value: "dark", label: "Dark" },
-              { value: "system", label: "System" },
+              {
+                value: "dark",
+                label: "Dark",
+              },
+              {
+                value: "system",
+                label: "System",
+              },
             ]}
           />
         </SettingRow>
@@ -471,7 +547,12 @@ function AppearanceSettings({ showToast }) {
           type="button"
           onClick={handleReset}
           disabled={loading || saving}
-          className="text-xs text-white/35 transition hover:text-white/70 disabled:opacity-40"
+          className={[
+            "rounded-lg px-2 py-1 text-xs",
+            "text-white/35 transition-all duration-200",
+            "hover:bg-white/[0.04] hover:text-white/70",
+            "disabled:cursor-not-allowed disabled:opacity-40",
+          ].join(" ")}
         >
           Reset appearance
         </button>
@@ -511,9 +592,18 @@ function AISettings() {
             onChange={setResponseStyle}
             disabled={loading || saving}
             options={[
-              { value: "concise", label: "Concise" },
-              { value: "balanced", label: "Balanced" },
-              { value: "detailed", label: "Detailed" },
+              {
+                value: "concise",
+                label: "Concise",
+              },
+              {
+                value: "balanced",
+                label: "Balanced",
+              },
+              {
+                value: "detailed",
+                label: "Detailed",
+              },
             ]}
           />
         </SettingRow>
@@ -579,7 +669,9 @@ function PasswordSettings({ showToast }) {
     }
 
     if (newPassword.length < 8) {
-      showToast("New password must be at least 8 characters");
+      showToast(
+        "New password must be at least 8 characters"
+      );
       return;
     }
 
@@ -596,16 +688,19 @@ function PasswordSettings({ showToast }) {
     setSaving(true);
 
     try {
-      const response = await fetch("/api/settings/password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-        }),
-      });
+      const response = await fetch(
+        "/api/settings/password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            currentPassword,
+            newPassword,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -652,6 +747,7 @@ function PasswordSettings({ showToast }) {
             }
             disabled={saving}
             autoComplete="current-password"
+            placeholder="Current password"
           />
         </div>
 
@@ -670,6 +766,7 @@ function PasswordSettings({ showToast }) {
               }
               disabled={saving}
               autoComplete="new-password"
+              placeholder="New password"
             />
           </div>
 
@@ -687,16 +784,19 @@ function PasswordSettings({ showToast }) {
               }
               disabled={saving}
               autoComplete="new-password"
+              placeholder="Confirm password"
             />
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end pt-1">
           <ActionButton
             onClick={changePassword}
             disabled={saving}
           >
-            {saving ? "Updating..." : "Update password"}
+            {saving
+              ? "Updating..."
+              : "Update password"}
           </ActionButton>
         </div>
       </div>
@@ -728,7 +828,9 @@ function SecuritySettings({ showToast }) {
       });
     } catch (error) {
       console.error("Sign out error:", error);
+
       setSigningOut(false);
+
       showToast("Failed to sign out");
     }
   }
@@ -776,7 +878,10 @@ function SecuritySettings({ showToast }) {
         callbackUrl: "/login?deleted=true",
       });
     } catch (error) {
-      console.error("Delete account error:", error);
+      console.error(
+        "Delete account error:",
+        error
+      );
 
       setDeleting(false);
 
@@ -799,6 +904,7 @@ function SecuritySettings({ showToast }) {
       eyebrow="Security"
       title="Security & sessions"
       description="Manage your current session and permanently destructive account actions."
+      danger
     >
       <div className="divide-y divide-white/[0.06]">
         <SettingRow
@@ -809,7 +915,9 @@ function SecuritySettings({ showToast }) {
             onClick={handleSignOut}
             disabled={signingOut || deleting}
           >
-            {signingOut ? "Signing out..." : "Sign out"}
+            {signingOut
+              ? "Signing out..."
+              : "Sign out"}
           </ActionButton>
         </SettingRow>
 
@@ -820,7 +928,12 @@ function SecuritySettings({ showToast }) {
           <button
             type="button"
             disabled
-            className="rounded-xl border border-white/[0.07] px-4 py-2.5 text-sm text-white/25"
+            className={[
+              "w-full rounded-xl border",
+              "border-white/[0.07] px-4 py-2.5",
+              "text-sm text-white/25",
+              "sm:w-auto",
+            ].join(" ")}
           >
             Coming soon
           </button>
@@ -828,41 +941,80 @@ function SecuritySettings({ showToast }) {
 
         <div className="pt-5">
           {!deleteOpen ? (
-            <div className="rounded-2xl border border-red-400/15 bg-red-400/[0.025] p-4 sm:p-5">
-              <p className="text-sm font-medium text-red-200">
-                Delete account
-              </p>
+            <div
+              className={[
+                "rounded-2xl border border-red-400/15",
+                "bg-red-400/[0.025] p-4 sm:p-5",
+              ].join(" ")}
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-red-200">
+                    Delete account
+                  </p>
 
-              <p className="mt-1 max-w-xl text-xs leading-5 text-white/35">
-                Permanently delete your Sentinel account and all
-                data owned by it. This cannot be undone.
-              </p>
+                  <p className="mt-1 max-w-xl text-xs leading-5 text-white/35">
+                    Permanently delete your Sentinel account
+                    and all data owned by it. This cannot be
+                    undone.
+                  </p>
+                </div>
 
-              <button
-                type="button"
-                onClick={() => setDeleteOpen(true)}
-                disabled={deleting || signingOut}
-                className="mt-4 rounded-xl border border-red-400/20 bg-red-400/[0.06] px-4 py-2.5 text-sm font-medium text-red-200 transition hover:bg-red-400/[0.12] disabled:opacity-40"
-              >
-                Delete account
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setDeleteOpen(true)}
+                  disabled={
+                    deleting || signingOut
+                  }
+                  className={[
+                    "w-full shrink-0 rounded-xl border",
+                    "border-red-400/20",
+                    "bg-red-400/[0.06]",
+                    "px-4 py-2.5 text-sm font-medium",
+                    "text-red-200",
+                    "transition-all duration-200",
+                    "hover:border-red-400/30",
+                    "hover:bg-red-400/[0.12]",
+                    "active:scale-[0.98]",
+                    "disabled:cursor-not-allowed",
+                    "disabled:opacity-40",
+                    "sm:w-auto",
+                  ].join(" ")}
+                >
+                  Delete account
+                </button>
+              </div>
             </div>
           ) : (
-            <div className="rounded-2xl border border-red-400/20 bg-red-400/[0.035] p-4 sm:p-5">
+            <div
+              className={[
+                "rounded-2xl border border-red-400/20",
+                "bg-red-400/[0.035] p-4 sm:p-5",
+                "shadow-[0_12px_40px_rgba(248,113,113,0.04)]",
+              ].join(" ")}
+            >
               <div className="flex items-start gap-3">
-                <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-red-400/20 bg-red-400/10 text-red-300">
+                <div
+                  className={[
+                    "mt-0.5 flex h-8 w-8 shrink-0",
+                    "items-center justify-center rounded-lg",
+                    "border border-red-400/20",
+                    "bg-red-400/10 text-red-300",
+                  ].join(" ")}
+                >
                   !
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   <p className="text-sm font-semibold text-red-200">
                     Confirm account deletion
                   </p>
 
                   <p className="mt-1 text-xs leading-5 text-white/40">
-                    Your account, projects, findings, conversations,
-                    messages, settings, and other owned data will be
-                    permanently deleted.
+                    Your account, projects, findings,
+                    conversations, messages, settings,
+                    and other owned data will be permanently
+                    deleted.
                   </p>
                 </div>
               </div>
@@ -881,12 +1033,14 @@ function SecuritySettings({ showToast }) {
                     type="password"
                     value={deletePassword}
                     onChange={(event) =>
-                      setDeletePassword(event.target.value)
+                      setDeletePassword(
+                        event.target.value
+                      )
                     }
                     disabled={deleting}
                     autoComplete="current-password"
                     placeholder="Current password"
-                    className="focus:border-red-400/30"
+                    className="focus:border-red-400/30 focus:bg-red-400/[0.02]"
                   />
                 </div>
 
@@ -896,7 +1050,10 @@ function SecuritySettings({ showToast }) {
                   </label>
 
                   <p className="mb-2 mt-1 text-xs text-white/25">
-                    Type <span className="text-red-200">DELETE</span>{" "}
+                    Type{" "}
+                    <span className="font-semibold text-red-200">
+                      DELETE
+                    </span>{" "}
                     to continue.
                   </p>
 
@@ -910,17 +1067,27 @@ function SecuritySettings({ showToast }) {
                     disabled={deleting}
                     placeholder="DELETE"
                     autoComplete="off"
-                    className="focus:border-red-400/30"
+                    className="focus:border-red-400/30 focus:bg-red-400/[0.02]"
                   />
                 </div>
               </div>
 
-              <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                 <button
                   type="button"
                   onClick={cancelDelete}
                   disabled={deleting}
-                  className="rounded-xl border border-white/[0.08] px-4 py-2.5 text-sm text-white/55 transition hover:bg-white/[0.04] hover:text-white disabled:opacity-40"
+                  className={[
+                    "w-full rounded-xl border",
+                    "border-white/[0.08]",
+                    "px-4 py-2.5 text-sm text-white/55",
+                    "transition-all duration-200",
+                    "hover:bg-white/[0.04]",
+                    "hover:text-white",
+                    "disabled:cursor-not-allowed",
+                    "disabled:opacity-40",
+                    "sm:w-auto",
+                  ].join(" ")}
                 >
                   Cancel
                 </button>
@@ -934,7 +1101,19 @@ function SecuritySettings({ showToast }) {
                     deleting ||
                     signingOut
                   }
-                  className="rounded-xl border border-red-400/20 bg-red-500/[0.75] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-30"
+                  className={[
+                    "w-full rounded-xl border",
+                    "border-red-400/20",
+                    "bg-red-500/[0.75]",
+                    "px-4 py-2.5 text-sm font-medium",
+                    "text-white",
+                    "transition-all duration-200",
+                    "hover:bg-red-500",
+                    "active:scale-[0.98]",
+                    "disabled:cursor-not-allowed",
+                    "disabled:opacity-30",
+                    "sm:w-auto",
+                  ].join(" ")}
                 >
                   {deleting
                     ? "Deleting account..."
@@ -988,79 +1167,168 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen min-w-0 overflow-x-hidden bg-black text-white">
       <Background />
 
       <Sidebar />
 
       <Topbar />
 
-      {/* IMPORTANT:
-          lg:ml-64 prevents the content from sitting
-          underneath the desktop sidebar.
-      */}
-      <main className="relative z-10 min-h-screen px-4 pb-16 pt-24 sm:px-6 lg:ml-64 lg:px-8 lg:pt-24">
-        <div className="mx-auto max-w-6xl">
-          {/* Header */}
-          <header className="mb-8 border-b border-white/[0.07] pb-7">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-300 shadow-[0_0_10px_rgba(103,232,249,0.7)]" />
+      <main
+  className={[
+    "relative z-10 min-h-screen min-w-0 overflow-x-hidden",
+    "w-full px-3 pb-20 pt-20",
+    "sm:px-6 sm:pt-24",
+    "lg:ml-64 lg:w-[calc(100%-16rem)] lg:px-8 lg:pt-24",
+  ].join(" ")}
+>
+        <div className="mx-auto w-full min-w-0 max-w-7xl">
+          {/* ─────────────────────────────────
+             Header
+          ───────────────────────────────── */}
 
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-cyan-300/55">
+          <header
+            className={[
+              "mb-6 border-b border-white/[0.07] pb-6",
+              "sm:mb-8 sm:pb-7",
+            ].join(" ")}
+          >
+            <div
+              className={[
+                "flex flex-col gap-4",
+                "sm:flex-row sm:items-end sm:justify-between",
+              ].join(" ")}
+            >
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span
+                    className={[
+                      "h-1.5 w-1.5 shrink-0 rounded-full",
+                      "bg-cyan-300",
+                      "shadow-[0_0_10px_rgba(103,232,249,0.7)]",
+                    ].join(" ")}
+                  />
+
+                  <p className="text-[9px] font-bold uppercase tracking-[0.24em] text-cyan-300/55 sm:text-[10px]">
                     Control center
                   </p>
                 </div>
 
-                <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+                <h1
+                  className={[
+                    "mt-2 text-3xl font-semibold",
+                    "tracking-[-0.03em] text-white",
+                    "sm:text-4xl",
+                  ].join(" ")}
+                >
                   Settings
                 </h1>
 
-                <p className="mt-2 max-w-xl text-sm leading-6 text-white/35">
-                  Configure your Sentinel environment, AI behavior,
-                  account, and security controls.
+                <p
+                  className={[
+                    "mt-2 max-w-xl text-xs leading-5",
+                    "text-white/35 sm:text-sm sm:leading-6",
+                  ].join(" ")}
+                >
+                  Configure your Sentinel environment, AI
+                  behavior, account, and security controls.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2 self-start rounded-full border border-white/[0.07] bg-white/[0.02] px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-white/35 sm:self-auto">
-                <span className="h-1.5 w-1.5 rounded-full bg-cyan-300" />
+              {/* Status badge */}
+
+              <div
+                className={[
+                  "flex w-fit items-center gap-2",
+                  "self-start rounded-full border",
+                  "border-white/[0.07]",
+                  "bg-white/[0.02] px-3 py-1.5",
+                  "text-[9px] uppercase tracking-[0.18em]",
+                  "text-white/35 sm:self-auto",
+                ].join(" ")}
+              >
+                <span
+                  className={[
+                    "h-1.5 w-1.5 rounded-full",
+                    "bg-cyan-300",
+                    "shadow-[0_0_8px_rgba(103,232,249,0.5)]",
+                  ].join(" ")}
+                />
+
                 Sentinel online
               </div>
             </div>
           </header>
 
-          {/* Settings layout */}
-          <div className="grid gap-6 lg:grid-cols-[190px_minmax(0,1fr)]">
+          {/* ─────────────────────────────────
+             Settings layout
+          ───────────────────────────────── */}
+
+          <div
+            className={[
+              "grid min-w-0 grid-cols-1",
+              "gap-4 sm:gap-6",
+              "lg:grid-cols-[200px_minmax(0,1fr)]",
+            ].join(" ")}
+          >
+            {/* Navigation */}
+
             <SettingsNav
               active={activeSection}
               onChange={handleSectionChange}
             />
 
-            <div className="space-y-5">
-              <div id="settings-account" className="scroll-mt-24">
+            {/* Content */}
+
+            <div className="min-w-0 space-y-5">
+              {/* Account */}
+
+              <div
+                id="settings-account"
+                className="scroll-mt-24"
+              >
                 <AccountSettings
                   showToast={showToast}
                 />
               </div>
 
-              <div id="settings-appearance" className="scroll-mt-24">
+              {/* Appearance */}
+
+              <div
+                id="settings-appearance"
+                className="scroll-mt-24"
+              >
                 <AppearanceSettings
                   showToast={showToast}
                 />
               </div>
 
-              <div id="settings-ai" className="scroll-mt-24">
+              {/* AI */}
+
+              <div
+                id="settings-ai"
+                className="scroll-mt-24"
+              >
                 <AISettings />
               </div>
 
-              <div id="settings-password" className="scroll-mt-24">
+              {/* Password */}
+
+              <div
+                id="settings-password"
+                className="scroll-mt-24"
+              >
                 <PasswordSettings
                   showToast={showToast}
                 />
               </div>
 
-              <div id="settings-security" className="scroll-mt-24">
+              {/* Security */}
+
+              <div
+                id="settings-security"
+                className="scroll-mt-24"
+              >
                 <SecuritySettings
                   showToast={showToast}
                 />
@@ -1070,12 +1338,36 @@ export default function SettingsPage() {
         </div>
       </main>
 
-      {/* Toast */}
+      {/* ─────────────────────────────────────
+         Toast notification
+      ───────────────────────────────────── */}
+
       {toast && (
-        <div className="fixed bottom-5 right-5 z-[100] max-w-sm rounded-xl border border-cyan-400/15 bg-[#09090b]/95 px-4 py-3 text-sm text-white shadow-2xl backdrop-blur-xl">
+        <div
+          role="status"
+          aria-live="polite"
+          className={[
+            "fixed inset-x-3 bottom-4 z-[100]",
+            "max-w-sm rounded-xl border",
+            "border-cyan-400/15",
+            "bg-[#09090b]/95 px-4 py-3",
+            "text-sm text-white shadow-2xl",
+            "backdrop-blur-xl",
+            "sm:inset-x-auto sm:right-5 sm:bottom-5",
+          ].join(" ")}
+        >
           <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan-300" />
-            {toast}
+            <span
+              className={[
+                "h-1.5 w-1.5 shrink-0 rounded-full",
+                "bg-cyan-300",
+                "shadow-[0_0_8px_rgba(103,232,249,0.6)]",
+              ].join(" ")}
+            />
+
+            <span className="min-w-0 break-words">
+              {toast}
+            </span>
           </div>
         </div>
       )}

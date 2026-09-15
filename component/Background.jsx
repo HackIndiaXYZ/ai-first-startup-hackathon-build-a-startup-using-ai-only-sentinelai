@@ -7,144 +7,220 @@ export default function Background() {
 
     useEffect(() => {
         const canvas = canvasRef.current;
+
+        if (!canvas) return;
+
         const ctx = canvas.getContext("2d");
 
-        let animationFrame;
+        if (!ctx) return;
 
-        // --------------------------------
+        let animationFrame;
+        let resizeObserver;
+
+        let width = 0;
+        let height = 0;
+        let previousHeight = 0;
+
+        let dpr = 1;
+
+        let particles = [];
+
+        // ==================================================
+        // CONFIGURATION
+        // ==================================================
+
+        const CONFIG = {
+            // Approximate page area per particle.
+            // Lower = more particles.
+            particleArea: 7000,
+
+            minParticles: 70,
+            maxParticles: 420,
+
+            // Particle size
+            minSize: 0.8,
+            maxSize: 2.4,
+
+            // Particle movement
+            minSpeed: 0.15,
+            maxSpeed: 0.55,
+
+            // Connection distance
+            connectionDistance: 140,
+
+            // Mouse interaction
+            mouseRadius: 240,
+            mouseForce: 2.0,
+
+            // Small percentage of cyan nodes
+            cyanChance: 0.055,
+
+            // Randomness inside each distribution cell.
+            // Keeps the network organic instead of looking
+            // like a perfect grid.
+            cellJitter: 0.32,
+
+            // Don't create particles for tiny page
+            // height changes.
+            growthThreshold: 80,
+        };
+
+        // ==================================================
         // MOUSE
-        // --------------------------------
+        // ==================================================
 
         const mouse = {
             x: null,
             y: null,
-            radius: 160,
         };
 
-        // --------------------------------
-        // PARTICLES
-        // --------------------------------
+        // ==================================================
+        // RANDOM HELPER
+        // ==================================================
 
-        const particles = [];
-
-        // --------------------------------
-        // CANVAS SIZE
-        // --------------------------------
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        function random(min, max) {
+            return (
+                Math.random() *
+                    (max - min) +
+                min
+            );
         }
 
-        resizeCanvas();
+        // ==================================================
+        // PARTICLE COUNT
+        // ==================================================
 
-        window.addEventListener("resize", resizeCanvas);
+        function calculateParticleCount(
+            targetWidth = width,
+            targetHeight = height
+        ) {
+            const area =
+                targetWidth *
+                targetHeight;
 
-        // --------------------------------
-        // MOUSE MOVEMENT
-        // --------------------------------
-
-        function handleMouseMove(event) {
-            mouse.x = event.clientX;
-            mouse.y = event.clientY;
+            return Math.max(
+                CONFIG.minParticles,
+                Math.min(
+                    CONFIG.maxParticles,
+                    Math.floor(
+                        area /
+                            CONFIG.particleArea
+                    )
+                )
+            );
         }
 
-        function handleMouseLeave() {
-            mouse.x = null;
-            mouse.y = null;
-        }
-
-        window.addEventListener("mousemove", handleMouseMove);
-        window.addEventListener("mouseleave", handleMouseLeave);
-
-        // --------------------------------
-        // PARTICLE CLASS
-        // --------------------------------
+        // ==================================================
+        // PARTICLE
+        // ==================================================
 
         class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
 
-                this.size = Math.random() * 1.8 + 0.5;
+                this.size = random(
+                    CONFIG.minSize,
+                    CONFIG.maxSize
+                );
+
+                const speed = random(
+                    CONFIG.minSpeed,
+                    CONFIG.maxSpeed
+                );
+
+                const angle =
+                    Math.random() *
+                    Math.PI *
+                    2;
 
                 this.speedX =
-                    (Math.random() - 0.5) * 0.4;
+                    Math.cos(angle) *
+                    speed;
 
                 this.speedY =
-                    (Math.random() - 0.5) * 0.4;
+                    Math.sin(angle) *
+                    speed;
+
+                this.isCyan =
+                    Math.random() <
+                    CONFIG.cyanChance;
             }
 
             update() {
+                // ------------------------------------------
+                // MOVEMENT
+                // ------------------------------------------
 
-                // Move particle
                 this.x += this.speedX;
                 this.y += this.speedY;
 
-                // Screen wrapping
+                // ------------------------------------------
+                // WRAP AROUND
+                // ------------------------------------------
 
                 if (this.x < 0) {
-                    this.x = canvas.width;
+                    this.x = width;
                 }
 
-                if (this.x > canvas.width) {
+                if (this.x > width) {
                     this.x = 0;
                 }
 
                 if (this.y < 0) {
-                    this.y = canvas.height;
+                    this.y = height;
                 }
 
-                if (this.y > canvas.height) {
+                if (this.y > height) {
                     this.y = 0;
                 }
 
-                // -------------------------
+                // ------------------------------------------
                 // MOUSE INTERACTION
-                // -------------------------
+                // ------------------------------------------
 
                 if (
                     mouse.x !== null &&
                     mouse.y !== null
                 ) {
                     const dx =
-                        this.x - mouse.x;
+                        this.x -
+                        mouse.x;
 
                     const dy =
-                        this.y - mouse.y;
+                        this.y -
+                        mouse.y;
 
                     const distance =
                         Math.sqrt(
                             dx * dx +
-                            dy * dy
+                                dy * dy
                         );
 
                     if (
                         distance <
-                        mouse.radius &&
+                            CONFIG.mouseRadius &&
                         distance > 0
                     ) {
                         const force =
-                            (mouse.radius -
+                            (CONFIG.mouseRadius -
                                 distance) /
-                            mouse.radius;
+                            CONFIG.mouseRadius;
 
                         this.x +=
-                            (dx / distance) *
+                            (dx /
+                                distance) *
                             force *
-                            1.5;
+                            CONFIG.mouseForce;
 
                         this.y +=
-                            (dy / distance) *
+                            (dy /
+                                distance) *
                             force *
-                            1.5;
+                            CONFIG.mouseForce;
                     }
                 }
             }
-
-            // -------------------------
-            // DRAW PARTICLE
-            // -------------------------
 
             draw() {
                 ctx.beginPath();
@@ -157,112 +233,639 @@ export default function Background() {
                     Math.PI * 2
                 );
 
-                ctx.fillStyle =
-                    "rgba(255, 90, 0, 0.85)";
+                ctx.fillStyle = this.isCyan
+                    ? "rgba(0, 220, 255, 0.85)"
+                    : "rgba(255, 90, 0, 0.82)";
 
                 ctx.fill();
             }
         }
 
-        // --------------------------------
-        // CREATE PARTICLES
-        // --------------------------------
+        // ==================================================
+        // CREATE EVENLY DISTRIBUTED PARTICLES
+        // ==================================================
+        //
+        // One particle is placed in each logical cell.
+        //
+        // This prevents:
+        //
+        // ❌ random clusters
+        // ❌ huge empty areas
+        //
+        // while jitter prevents:
+        //
+        // ❌ obvious grid pattern
+        //
+        // ==================================================
 
-        const particleCount = Math.min(
-            Math.floor(
-                (canvas.width *
-                    canvas.height) /
-                    12000
-            ),
-            140
-        );
-
-        for (
-            let i = 0;
-            i < particleCount;
-            i++
+        function createEvenParticles(
+            count,
+            regionTop,
+            regionHeight
         ) {
+            const result = [];
+
+            if (
+                count <= 0 ||
+                regionHeight <= 0
+            ) {
+                return result;
+            }
+
+            const aspectRatio =
+                width /
+                Math.max(
+                    regionHeight,
+                    1
+                );
+
+            let columns = Math.ceil(
+                Math.sqrt(
+                    count *
+                        aspectRatio
+                )
+            );
+
+            columns = Math.max(
+                1,
+                columns
+            );
+
+            const rows = Math.ceil(
+                count /
+                    columns
+            );
+
+            const cellWidth =
+                width /
+                columns;
+
+            const cellHeight =
+                regionHeight /
+                rows;
+
+            for (
+                let row = 0;
+                row < rows;
+                row++
+            ) {
+                for (
+                    let column = 0;
+                    column < columns;
+                    column++
+                ) {
+                    if (
+                        result.length >=
+                        count
+                    ) {
+                        break;
+                    }
+
+                    // --------------------------------------
+                    // CELL CENTER
+                    // --------------------------------------
+
+                    const centerX =
+                        column *
+                            cellWidth +
+                        cellWidth / 2;
+
+                    const centerY =
+                        regionTop +
+                        row *
+                            cellHeight +
+                        cellHeight / 2;
+
+                    // --------------------------------------
+                    // CONTROLLED RANDOM OFFSET
+                    // --------------------------------------
+
+                    const jitterX =
+                        cellWidth *
+                        CONFIG.cellJitter;
+
+                    const jitterY =
+                        cellHeight *
+                        CONFIG.cellJitter;
+
+                    let x =
+                        centerX +
+                        random(
+                            -jitterX,
+                            jitterX
+                        );
+
+                    let y =
+                        centerY +
+                        random(
+                            -jitterY,
+                            jitterY
+                        );
+
+                    // --------------------------------------
+                    // KEEP INSIDE CANVAS
+                    // --------------------------------------
+
+                    x = Math.max(
+                        2,
+                        Math.min(
+                            width - 2,
+                            x
+                        )
+                    );
+
+                    y = Math.max(
+                        regionTop + 2,
+                        Math.min(
+                            regionTop +
+                                regionHeight -
+                                2,
+                            y
+                        )
+                    );
+
+                    result.push(
+                        new Particle(
+                            x,
+                            y
+                        )
+                    );
+                }
+            }
+
+            return result;
+        }
+
+        // ==================================================
+        // INITIAL PARTICLES
+        // ==================================================
+
+        function buildInitialParticles() {
+            const count =
+                calculateParticleCount();
+
+            particles =
+                createEvenParticles(
+                    count,
+                    0,
+                    height
+                );
+        }
+
+        // ==================================================
+        // ADD PARTICLES ONLY TO NEW BOTTOM AREA
+        // ==================================================
+        //
+        // IMPORTANT:
+        //
+        // Existing particles are NOT moved.
+        //
+        // If page changes:
+        //
+        //       1000px
+        //         ↓
+        //       1800px
+        //
+        // new particles are created only in:
+        //
+        //       1000px → 1800px
+        //
+        // ==================================================
+
+        function addParticlesToBottom(
+            oldHeight,
+            newHeight
+        ) {
+            const targetCount =
+                calculateParticleCount(
+                    width,
+                    newHeight
+                );
+
+            const currentCount =
+                particles.length;
+
+            const additionalCount =
+                targetCount -
+                currentCount;
+
+            if (
+                additionalCount <= 0
+            ) {
+                return;
+            }
+
+            const growthHeight =
+                newHeight -
+                oldHeight;
+
+            if (
+                growthHeight <
+                CONFIG.growthThreshold
+            ) {
+                return;
+            }
+
+            const newParticles =
+                createEvenParticles(
+                    additionalCount,
+                    oldHeight,
+                    growthHeight
+                );
+
             particles.push(
-                new Particle()
+                ...newParticles
             );
         }
 
-        // --------------------------------
-        // CONNECT PARTICLES
-        // --------------------------------
+        // ==================================================
+        // REMOVE EXCESS PARTICLES
+        // ==================================================
 
-        function connectParticles() {
+        function trimParticles() {
+            const targetCount =
+                calculateParticleCount();
+
+            if (
+                particles.length >
+                targetCount
+            ) {
+                particles =
+                    particles.slice(
+                        0,
+                        targetCount
+                    );
+            }
+        }
+
+        // ==================================================
+        // SPATIAL GRID
+        // ==================================================
+        //
+        // Instead of checking every particle against
+        // every other particle, only nearby particles
+        // are checked.
+        //
+        // Much better for long pages.
+        //
+        // ==================================================
+
+        function createSpatialGrid() {
+            const cellSize =
+                CONFIG.connectionDistance;
+
+            const grid =
+                new Map();
 
             for (
-                let a = 0;
-                a < particles.length;
-                a++
+                const particle of particles
             ) {
+                const cellX =
+                    Math.floor(
+                        particle.x /
+                            cellSize
+                    );
+
+                const cellY =
+                    Math.floor(
+                        particle.y /
+                            cellSize
+                    );
+
+                const key =
+                    `${cellX},${cellY}`;
+
+                let cell =
+                    grid.get(key);
+
+                if (!cell) {
+                    cell = [];
+
+                    grid.set(
+                        key,
+                        cell
+                    );
+                }
+
+                cell.push(
+                    particle
+                );
+            }
+
+            return {
+                grid,
+                cellSize,
+            };
+        }
+
+        // ==================================================
+        // CONNECT PARTICLES
+        // ==================================================
+
+        function connectParticles() {
+            if (
+                particles.length <
+                2
+            ) {
+                return;
+            }
+
+            const {
+                grid,
+                cellSize,
+            } = createSpatialGrid();
+
+            const maxDistance =
+                CONFIG.connectionDistance;
+
+            const maxDistanceSquared =
+                maxDistance *
+                maxDistance;
+
+            for (
+                const [
+                    key,
+                    cellParticles,
+                ] of grid
+            ) {
+                const [
+                    cellX,
+                    cellY,
+                ] = key
+                    .split(",")
+                    .map(Number);
+
+                // ------------------------------------------
+                // CHECK ONLY NEIGHBORING CELLS
+                // ------------------------------------------
 
                 for (
-                    let b = a + 1;
-                    b < particles.length;
-                    b++
+                    let offsetX = -1;
+                    offsetX <= 1;
+                    offsetX++
                 ) {
-
-                    const dx =
-                        particles[a].x -
-                        particles[b].x;
-
-                    const dy =
-                        particles[a].y -
-                        particles[b].y;
-
-                    const distance =
-                        Math.sqrt(
-                            dx * dx +
-                            dy * dy
-                        );
-
-                    const maxDistance = 120;
-
-                    if (
-                        distance <
-                        maxDistance
+                    for (
+                        let offsetY = -1;
+                        offsetY <= 1;
+                        offsetY++
                     ) {
+                        const neighborKey =
+                            `${cellX + offsetX},${
+                                cellY + offsetY
+                            }`;
 
-                        const opacity =
-                            1 -
-                            distance /
-                                maxDistance;
+                        const neighbors =
+                            grid.get(
+                                neighborKey
+                            );
 
-                        ctx.beginPath();
+                        if (!neighbors) {
+                            continue;
+                        }
 
-                        ctx.strokeStyle =
-                            `rgba(255, 90, 0, ${
-                                opacity * 0.25
-                            })`;
+                        for (
+                            const particleA of cellParticles
+                        ) {
+                            for (
+                                const particleB of neighbors
+                            ) {
+                                if (
+                                    particleA ===
+                                    particleB
+                                ) {
+                                    continue;
+                                }
 
-                        ctx.lineWidth = 1;
+                                // ----------------------------------
+                                // Prevent duplicate connections.
+                                // ----------------------------------
 
-                        ctx.moveTo(
-                            particles[a].x,
-                            particles[a].y
-                        );
+                                if (
+                                    particleA.x >
+                                    particleB.x
+                                ) {
+                                    continue;
+                                }
 
-                        ctx.lineTo(
-                            particles[b].x,
-                            particles[b].y
-                        );
+                                if (
+                                    particleA.x ===
+                                        particleB.x &&
+                                    particleA.y >
+                                        particleB.y
+                                ) {
+                                    continue;
+                                }
 
-                        ctx.stroke();
+                                const dx =
+                                    particleA.x -
+                                    particleB.x;
+
+                                const dy =
+                                    particleA.y -
+                                    particleB.y;
+
+                                const distanceSquared =
+                                    dx * dx +
+                                    dy * dy;
+
+                                if (
+                                    distanceSquared >
+                                    maxDistanceSquared
+                                ) {
+                                    continue;
+                                }
+
+                                const distance =
+                                    Math.sqrt(
+                                        distanceSquared
+                                    );
+
+                                const opacity =
+                                    1 -
+                                    distance /
+                                        maxDistance;
+
+                                ctx.beginPath();
+
+                                const isCyan =
+                                    particleA.isCyan ||
+                                    particleB.isCyan;
+
+                                ctx.strokeStyle =
+                                    isCyan
+                                        ? `rgba(0, 220, 255, ${
+                                              opacity *
+                                              0.14
+                                          })`
+                                        : `rgba(255, 90, 0, ${
+                                              opacity *
+                                              0.18
+                                          })`;
+
+                                ctx.lineWidth =
+                                    0.7;
+
+                                ctx.moveTo(
+                                    particleA.x,
+                                    particleA.y
+                                );
+
+                                ctx.lineTo(
+                                    particleB.x,
+                                    particleB.y
+                                );
+
+                                ctx.stroke();
+                            }
+                        }
                     }
                 }
             }
         }
 
-        // --------------------------------
-        // ANIMATION LOOP
-        // --------------------------------
+        // ==================================================
+        // CANVAS RESIZE
+        // ==================================================
+
+        function resizeCanvas() {
+            const documentElement =
+                document.documentElement;
+
+            const body =
+                document.body;
+
+            const newWidth =
+                Math.max(
+                    window.innerWidth,
+                    documentElement.clientWidth
+                );
+
+            const newHeight =
+                Math.max(
+                    documentElement.scrollHeight,
+                    body?.scrollHeight || 0,
+                    window.innerHeight
+                );
+
+            const oldHeight =
+                height;
+
+            width = newWidth;
+            height = newHeight;
+
+            // ------------------------------------------
+            // DEVICE PIXEL RATIO
+            // ------------------------------------------
+
+            dpr = Math.min(
+                window.devicePixelRatio ||
+                    1,
+                1.5
+            );
+
+            canvas.width =
+                Math.floor(
+                    width * dpr
+                );
+
+            canvas.height =
+                Math.floor(
+                    height * dpr
+                );
+
+            canvas.style.width =
+                `${width}px`;
+
+            canvas.style.height =
+                `${height}px`;
+
+            ctx.setTransform(
+                dpr,
+                0,
+                0,
+                dpr,
+                0,
+                0
+            );
+
+            // ------------------------------------------
+            // FIRST INITIALIZATION
+            // ------------------------------------------
+
+            if (
+                particles.length === 0
+            ) {
+                buildInitialParticles();
+
+                previousHeight =
+                    height;
+
+                return;
+            }
+
+            // ------------------------------------------
+            // PAGE GREW
+            // ------------------------------------------
+            //
+            // Existing particles stay where they are.
+            // New particles are created ONLY below.
+            //
+            // ------------------------------------------
+
+            if (
+                height >
+                oldHeight +
+                    CONFIG.growthThreshold
+            ) {
+                addParticlesToBottom(
+                    oldHeight,
+                    height
+                );
+            }
+
+            // ------------------------------------------
+            // PAGE SHRANK
+            // ------------------------------------------
+
+            if (
+                height <
+                oldHeight
+            ) {
+                trimParticles();
+            }
+
+            previousHeight =
+                height;
+        }
+
+        // ==================================================
+        // MOUSE EVENTS
+        // ==================================================
+
+        function handleMouseMove(
+            event
+        ) {
+            mouse.x =
+                event.clientX;
+
+            mouse.y =
+                event.clientY +
+                window.scrollY;
+        }
+
+        function handleMouseLeave() {
+            mouse.x = null;
+            mouse.y = null;
+        }
+
+        // ==================================================
+        // ANIMATION
+        // ==================================================
 
         function animate() {
-
-            // PURE BLACK BACKGROUND
+            // ------------------------------------------
+            // BACKGROUND
+            // ------------------------------------------
 
             ctx.fillStyle =
                 "#000000";
@@ -270,26 +873,76 @@ export default function Background() {
             ctx.fillRect(
                 0,
                 0,
-                canvas.width,
-                canvas.height
+                width,
+                height
             );
 
-            // Update particles
+            // ------------------------------------------
+            // SUBTLE ORANGE AMBIENT GLOW
+            // ------------------------------------------
+
+            const glowRadius =
+                Math.max(
+                    width,
+                    height
+                ) *
+                0.65;
+
+            const glow =
+                ctx.createRadialGradient(
+                    width * 0.5,
+                    height * 0.05,
+                    0,
+                    width * 0.5,
+                    height * 0.05,
+                    glowRadius
+                );
+
+            glow.addColorStop(
+                0,
+                "rgba(255, 90, 0, 0.055)"
+            );
+
+            glow.addColorStop(
+                1,
+                "rgba(255, 90, 0, 0)"
+            );
+
+            ctx.fillStyle =
+                glow;
+
+            ctx.fillRect(
+                0,
+                0,
+                width,
+                height
+            );
+
+            // ------------------------------------------
+            // UPDATE
+            // ------------------------------------------
 
             for (
-                const particle
-                of particles
+                const particle of particles
             ) {
-
                 particle.update();
-                particle.draw();
             }
 
-            // Connect nearby particles
+            // ------------------------------------------
+            // CONNECTIONS
+            // ------------------------------------------
 
             connectParticles();
 
-            // Next frame
+            // ------------------------------------------
+            // PARTICLES
+            // ------------------------------------------
+
+            for (
+                const particle of particles
+            ) {
+                particle.draw();
+            }
 
             animationFrame =
                 requestAnimationFrame(
@@ -297,16 +950,54 @@ export default function Background() {
                 );
         }
 
-        // Start animation
+        // ==================================================
+        // INITIALIZE
+        // ==================================================
+
+        resizeCanvas();
+
+        window.addEventListener(
+            "resize",
+            resizeCanvas
+        );
+
+        window.addEventListener(
+            "mousemove",
+            handleMouseMove,
+            {
+                passive: true,
+            }
+        );
+
+        window.addEventListener(
+            "mouseleave",
+            handleMouseLeave
+        );
+
+        // ==================================================
+        // WATCH DOCUMENT HEIGHT
+        // ==================================================
+
+        resizeObserver =
+            new ResizeObserver(() => {
+                resizeCanvas();
+            });
+
+        resizeObserver.observe(
+            document.body
+        );
+
+        // ==================================================
+        // START ANIMATION
+        // ==================================================
 
         animate();
 
-        // --------------------------------
+        // ==================================================
         // CLEANUP
-        // --------------------------------
+        // ==================================================
 
         return () => {
-
             cancelAnimationFrame(
                 animationFrame
             );
@@ -325,14 +1016,16 @@ export default function Background() {
                 "mouseleave",
                 handleMouseLeave
             );
-        };
 
+            resizeObserver?.disconnect();
+        };
     }, []);
 
     return (
         <canvas
             ref={canvasRef}
-            className="absolute inset-0 h-full w-full pointer-events-none"
+            className="pointer-events-none absolute left-0 top-0 z-0"
+            aria-hidden="true"
         />
     );
 }
