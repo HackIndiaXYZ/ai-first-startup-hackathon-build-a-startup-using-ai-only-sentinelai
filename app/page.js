@@ -95,7 +95,7 @@ export default async function HomePage() {
                 </div>
 
                 <div className="text-[9px] tracking-[0.25em] text-zinc-600">
-                  BY GHOSTSHELL
+                  BY VARUN SHARMA
                 </div>
 
               </div>
