@@ -25,14 +25,12 @@ const severityStyles = {
 };
 
 function SeverityBadge({ severity }) {
-  const normalized =
-    String(severity || "INFO").toUpperCase();
+  const normalized = String(severity || "INFO").toUpperCase();
 
   return (
     <span
-      className={`inline-flex items-center rounded-md border px-2 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] ${
-        severityStyles[normalized] ||
-        severityStyles.INFO
+      className={`inline-flex shrink-0 items-center rounded-md border px-2 py-1 text-[8px] font-semibold uppercase tracking-[0.14em] ${
+        severityStyles[normalized] || severityStyles.INFO
       }`}
     >
       {normalized}
@@ -124,29 +122,18 @@ export default function DashboardPage() {
           }),
         ]);
 
-      const projectsData =
-        await projectsResponse.json();
+      const projectsData = await projectsResponse.json();
+      const findingsData = await findingsResponse.json();
 
-      const findingsData =
-        await findingsResponse.json();
-
-      if (
-        !projectsResponse.ok ||
-        !projectsData.success
-      ) {
+      if (!projectsResponse.ok || !projectsData.success) {
         throw new Error(
-          projectsData.error ||
-            "Failed to load projects."
+          projectsData.error || "Failed to load projects."
         );
       }
 
-      if (
-        !findingsResponse.ok ||
-        !findingsData.success
-      ) {
+      if (!findingsResponse.ok || !findingsData.success) {
         throw new Error(
-          findingsData.error ||
-            "Failed to load findings."
+          findingsData.error || "Failed to load findings."
         );
       }
 
@@ -162,14 +149,10 @@ export default function DashboardPage() {
           : []
       );
     } catch (err) {
-      console.error(
-        "Dashboard loading error:",
-        err
-      );
+      console.error("Dashboard loading error:", err);
 
       setError(
-        err.message ||
-          "Failed to load dashboard."
+        err.message || "Failed to load dashboard."
       );
     } finally {
       setLoading(false);
@@ -267,56 +250,47 @@ export default function DashboardPage() {
         100,
         100 -
           Math.round(
-            (weighted /
-              Math.max(summary.total, 1)) *
-              2
+            (weighted / Math.max(summary.total, 1)) * 2
           )
       )
     );
   }, [summary]);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050608] text-white">
-
+    <div className="relative min-h-screen overflow-x-clip bg-[#050608] text-white">
       <Background />
 
       <Topbar />
       <Sidebar />
 
-      <main className="relative z-10 min-h-screen pt-16 lg:ml-64">
-
-        <div className="p-4 sm:p-6 lg:p-8">
+      <main className="relative z-10 min-h-screen min-w-0 max-w-full overflow-x-clip pt-16 lg:ml-64">
+        <div className="w-full min-w-0 max-w-full p-4 sm:p-6 lg:p-8">
 
           {/* HEADER */}
 
-          <section className="mb-8">
-
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-
-              <div>
-
+          <section className="mb-8 min-w-0">
+            <div className="flex min-w-0 flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="min-w-0">
                 <p className="text-[9px] font-semibold uppercase tracking-[0.3em] text-[#6C63FF]">
                   OVERVIEW
                 </p>
 
-                <h1 className="mt-2 text-3xl font-semibold tracking-tight text-white">
+                <h1 className="mt-2 break-words text-3xl font-semibold tracking-tight text-white">
                   Security Dashboard
                 </h1>
 
                 <p className="mt-2 max-w-2xl text-sm leading-6 text-[#68707D]">
-                  Monitor your projects, security
-                  findings, and SentinelAI analysis
-                  activity from one place.
+                  Monitor your projects, security findings,
+                  and SentinelAI analysis activity from one
+                  place.
                 </p>
-
               </div>
 
-              <div className="flex items-center gap-3">
-
+              <div className="flex w-full min-w-0 flex-wrap items-center gap-3 lg:w-auto">
                 <button
                   type="button"
                   onClick={loadDashboard}
-                  className="flex h-10 items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.02] px-4 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#68707D] transition hover:border-white/[0.12] hover:text-white"
+                  className="flex h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.02] px-4 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#68707D] transition hover:border-white/[0.12] hover:text-white lg:flex-none"
                 >
                   <span>↻</span>
                   Refresh
@@ -324,50 +298,38 @@ export default function DashboardPage() {
 
                 <Link
                   href="/projects"
-                  className="flex h-10 items-center gap-2 rounded-lg border border-[#6C63FF]/20 bg-[#6C63FF]/[0.08] px-4 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#8B84FF] transition hover:bg-[#6C63FF]/[0.14] hover:text-white"
+                  className="flex h-10 min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-[#6C63FF]/20 bg-[#6C63FF]/[0.08] px-4 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#8B84FF] transition hover:bg-[#6C63FF]/[0.14] hover:text-white lg:flex-none"
                 >
                   <span>+</span>
                   New Project
                 </Link>
-
               </div>
-
             </div>
-
           </section>
 
           {/* ERROR */}
 
           {error && (
-            <div className="mb-6 rounded-xl border border-red-500/10 bg-red-500/[0.04] px-4 py-3">
-
-              <p className="text-xs text-red-300/80">
+            <div className="mb-6 min-w-0 rounded-xl border border-red-500/10 bg-red-500/[0.04] px-4 py-3">
+              <p className="break-words text-xs text-red-300/80">
                 {error}
               </p>
-
             </div>
           )}
 
           {/* SYSTEM STATUS */}
 
-          <section className="mb-6">
-
-            <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-5 backdrop-blur-xl">
-
+          <section className="mb-6 min-w-0">
+            <div className="relative min-w-0 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-5 backdrop-blur-xl">
               <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-[#6C63FF]/[0.04] blur-3xl" />
 
-              <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-
-                <div className="flex items-center gap-4">
-
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#6C63FF]/20 bg-[#0D0B18]">
-
+              <div className="relative flex min-w-0 flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 items-center gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#6C63FF]/20 bg-[#0D0B18]">
                     <span className="h-2.5 w-2.5 rounded-full bg-[#6C63FF] shadow-[0_0_14px_rgba(108,99,255,0.8)]" />
-
                   </div>
 
-                  <div>
-
+                  <div className="min-w-0">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-[#454C57]">
                       SENTINEL ENGINE
                     </p>
@@ -375,59 +337,51 @@ export default function DashboardPage() {
                     <p className="mt-1 text-sm font-medium text-[#B8BDC7]">
                       Systems Operational
                     </p>
-
                   </div>
-
                 </div>
 
-                <div className="flex flex-wrap items-center gap-5">
-
-                  <div>
+                <div className="flex min-w-0 flex-wrap items-center gap-5">
+                  <div className="min-w-0">
                     <p className="text-[8px] uppercase tracking-[0.16em] text-[#454C57]">
                       ENGINE
                     </p>
 
-                    <p className="mt-1 text-xs text-[#68707D]">
+                    <p className="mt-1 truncate text-xs text-[#68707D]">
                       SentinelAI
                     </p>
                   </div>
 
                   <div className="hidden h-7 w-px bg-white/[0.06] sm:block" />
 
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[8px] uppercase tracking-[0.16em] text-[#454C57]">
                       MODEL
                     </p>
 
-                    <p className="mt-1 text-xs text-[#68707D]">
+                    <p className="mt-1 truncate text-xs text-[#68707D]">
                       GPT-OSS-20B
                     </p>
                   </div>
 
                   <div className="hidden h-7 w-px bg-white/[0.06] sm:block" />
 
-                  <div>
+                  <div className="min-w-0">
                     <p className="text-[8px] uppercase tracking-[0.16em] text-[#454C57]">
                       DATABASE
                     </p>
 
-                    <p className="mt-1 text-xs text-[#68707D]">
+                    <p className="mt-1 truncate text-xs text-[#68707D]">
                       PostgreSQL
                     </p>
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           </section>
 
           {/* STAT CARDS */}
 
-          <section className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
-
+          <section className="mb-6 grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
             {[
               [
                 "TOTAL FINDINGS",
@@ -459,185 +413,137 @@ export default function DashboardPage() {
                 projects.length,
                 "Security projects",
               ],
-            ].map(
-              ([label, value, description]) => (
-                <div
-                  key={label}
-                  className="rounded-xl border border-white/[0.06] bg-[#080A0D]/80 p-4 backdrop-blur-xl"
-                >
+            ].map(([label, value, description]) => (
+              <div
+                key={label}
+                className="min-w-0 rounded-xl border border-white/[0.06] bg-[#080A0D]/80 p-4 backdrop-blur-xl"
+              >
+                <p className="truncate text-[8px] font-semibold uppercase tracking-[0.18em] text-[#454C57]">
+                  {label}
+                </p>
 
-                  <p className="text-[8px] font-semibold uppercase tracking-[0.18em] text-[#454C57]">
-                    {label}
-                  </p>
+                <p className="mt-3 text-2xl font-semibold tracking-tight text-white">
+                  {loading ? "—" : value}
+                </p>
 
-                  <p className="mt-3 text-2xl font-semibold tracking-tight text-white">
-                    {loading ? "—" : value}
-                  </p>
-
-                  <p className="mt-1 text-[9px] text-[#454C57]">
-                    {description}
-                  </p>
-
-                </div>
-              )
-            )}
-
+                <p className="mt-1 truncate text-[9px] text-[#454C57]">
+                  {description}
+                </p>
+              </div>
+            ))}
           </section>
 
           {/* MAIN GRID */}
 
-          <section className="grid gap-6 xl:grid-cols-[1.35fr_0.65fr]">
+          <section className="grid min-w-0 max-w-full gap-6 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,0.65fr)]">
 
             {/* LEFT */}
 
-            <div className="space-y-6">
+            <div className="min-w-0 max-w-full space-y-6">
 
               {/* RISK OVERVIEW */}
 
-              <div className="relative overflow-hidden rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-6 backdrop-blur-xl">
-
-                <div className="flex items-start justify-between gap-4">
-
-                  <div>
-
+              <div className="relative min-w-0 overflow-hidden rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-6 backdrop-blur-xl">
+                <div className="flex min-w-0 items-start justify-between gap-4">
+                  <div className="min-w-0">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-[#555D6B]">
                       SECURITY POSTURE
                     </p>
 
-                    <h2 className="mt-2 text-lg font-medium text-[#B8BDC7]">
+                    <h2 className="mt-2 break-words text-lg font-medium text-[#B8BDC7]">
                       Overall Security Risk
                     </h2>
-
                   </div>
 
                   <Link
                     href="/findings"
-                    className="text-[9px] uppercase tracking-[0.16em] text-[#555D6B] transition hover:text-white"
+                    className="shrink-0 text-[9px] uppercase tracking-[0.16em] text-[#555D6B] transition hover:text-white"
                   >
                     View Findings →
                   </Link>
-
                 </div>
 
-                <div className="mt-8 grid gap-8 md:grid-cols-[180px_1fr] md:items-center">
+                <div className="mt-8 grid min-w-0 gap-8 md:grid-cols-[180px_minmax(0,1fr)] md:items-center">
 
                   {/* SCORE */}
 
-                  <div className="relative mx-auto flex h-40 w-40 items-center justify-center">
-
+                  <div className="relative mx-auto flex h-40 w-40 shrink-0 items-center justify-center">
                     <div className="absolute inset-0 rounded-full border border-white/[0.05]" />
 
                     <div className="absolute inset-3 rounded-full border border-[#6C63FF]/10" />
 
                     <div className="text-center">
-
                       <p className="text-4xl font-semibold text-white">
-                        {loading
-                          ? "—"
-                          : riskScore}
+                        {loading ? "—" : riskScore}
                       </p>
 
                       <p className="mt-1 text-[8px] uppercase tracking-[0.18em] text-[#454C57]">
                         Risk Score
                       </p>
-
                     </div>
-
                   </div>
 
                   {/* RISK DETAILS */}
 
-                  <div>
+                  <div className="min-w-0">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="h-2 w-2 shrink-0 rounded-full bg-[#6C63FF]" />
 
-                    <div className="flex items-center gap-3">
-
-                      <span className="h-2 w-2 rounded-full bg-[#6C63FF]" />
-
-                      <h3 className="text-sm font-medium text-[#B8BDC7]">
-                        {loading
-                          ? "Loading..."
-                          : risk.label}
+                      <h3 className="truncate text-sm font-medium text-[#B8BDC7]">
+                        {loading ? "Loading..." : risk.label}
                       </h3>
-
                     </div>
 
-                    <p className="mt-3 max-w-xl text-xs leading-6 text-[#68707D]">
+                    <p className="mt-3 max-w-xl break-words text-xs leading-6 text-[#68707D]">
                       {risk.description}
                     </p>
 
                     <div className="mt-6 space-y-3">
-
                       {[
-                        [
-                          "Critical",
-                          summary.critical,
-                        ],
-                        [
-                          "High",
-                          summary.high,
-                        ],
-                        [
-                          "Medium",
-                          summary.medium,
-                        ],
-                        [
-                          "Low",
-                          summary.low,
-                        ],
-                      ].map(
-                        ([label, value]) => (
-                          <div
-                            key={label}
-                            className="flex items-center gap-3"
-                          >
+                        ["Critical", summary.critical],
+                        ["High", summary.high],
+                        ["Medium", summary.medium],
+                        ["Low", summary.low],
+                      ].map(([label, value]) => (
+                        <div
+                          key={label}
+                          className="flex min-w-0 items-center gap-3"
+                        >
+                          <span className="w-16 shrink-0 text-[9px] text-[#555D6B]">
+                            {label}
+                          </span>
 
-                            <span className="w-16 text-[9px] text-[#555D6B]">
-                              {label}
-                            </span>
-
-                            <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.04]">
-
-                              <div
-                                className="h-full rounded-full bg-[#6C63FF]"
-                                style={{
-                                  width:
-                                    summary.total ===
-                                    0
-                                      ? "0%"
-                                      : `${
-                                          (value /
-                                            summary.total) *
-                                          100
-                                        }%`,
-                                }}
-                              />
-
-                            </div>
-
-                            <span className="w-6 text-right text-[9px] text-[#68707D]">
-                              {value}
-                            </span>
-
+                          <div className="h-1.5 min-w-0 flex-1 overflow-hidden rounded-full bg-white/[0.04]">
+                            <div
+                              className="h-full rounded-full bg-[#6C63FF]"
+                              style={{
+                                width:
+                                  summary.total === 0
+                                    ? "0%"
+                                    : `${
+                                        (value /
+                                          summary.total) *
+                                        100
+                                      }%`,
+                              }}
+                            />
                           </div>
-                        )
-                      )}
 
+                          <span className="w-6 shrink-0 text-right text-[9px] text-[#68707D]">
+                            {value}
+                          </span>
+                        </div>
+                      ))}
                     </div>
-
                   </div>
-
                 </div>
-
               </div>
 
               {/* RECENT FINDINGS */}
 
-              <div className="rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-6 backdrop-blur-xl">
-
-                <div className="flex items-end justify-between">
-
-                  <div>
-
+              <div className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-6 backdrop-blur-xl">
+                <div className="flex min-w-0 items-end justify-between gap-4">
+                  <div className="min-w-0">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-[#555D6B]">
                       SECURITY
                     </p>
@@ -645,35 +551,27 @@ export default function DashboardPage() {
                     <h2 className="mt-2 text-lg font-medium text-[#B8BDC7]">
                       Recent Findings
                     </h2>
-
                   </div>
 
                   <Link
                     href="/findings"
-                    className="text-[9px] uppercase tracking-[0.16em] text-[#555D6B] transition hover:text-white"
+                    className="shrink-0 text-[9px] uppercase tracking-[0.16em] text-[#555D6B] transition hover:text-white"
                   >
                     View All →
                   </Link>
-
                 </div>
 
                 {loading ? (
                   <div className="mt-5 space-y-3">
-
-                    {[1, 2, 3].map(
-                      (item) => (
-                        <div
-                          key={item}
-                          className="h-16 animate-pulse rounded-xl bg-white/[0.025]"
-                        />
-                      )
-                    )}
-
+                    {[1, 2, 3].map((item) => (
+                      <div
+                        key={item}
+                        className="h-16 animate-pulse rounded-xl bg-white/[0.025]"
+                      />
+                    ))}
                   </div>
-                ) : recentFindings.length ===
-                  0 ? (
+                ) : recentFindings.length === 0 ? (
                   <div className="mt-5 rounded-xl border border-dashed border-white/[0.07] p-8 text-center">
-
                     <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-lg border border-[#6C63FF]/20 bg-[#0D0B18] text-[#6C63FF]">
                       ✓
                     </div>
@@ -688,75 +586,56 @@ export default function DashboardPage() {
                     >
                       Start an Analysis →
                     </Link>
-
                   </div>
                 ) : (
-                  <div className="mt-5 divide-y divide-white/[0.05]">
-
-                    {recentFindings.map(
-                      (finding) => (
-                        <div
-                          key={finding.id}
-                          className="flex items-center gap-4 py-4 first:pt-0 last:pb-0"
-                        >
-
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.02] text-[9px] text-[#454C57]">
-                            ◇
-                          </div>
-
-                          <div className="min-w-0 flex-1">
-
-                            <p className="truncate text-xs font-medium text-[#B8BDC7]">
-                              {finding.title}
-                            </p>
-
-                            <div className="mt-1 flex items-center gap-3">
-
-                              <span className="truncate text-[9px] text-[#454C57]">
-                                {finding.project?.name ||
-                                  "Unknown Project"}
-                              </span>
-
-                              <span className="text-[9px] text-[#454C57]">
-                                {formatDate(
-                                  finding.createdAt
-                                )}
-                              </span>
-
-                            </div>
-
-                          </div>
-
-                          <SeverityBadge
-                            severity={
-                              finding.severity
-                            }
-                          />
-
+                  <div className="mt-5 min-w-0 divide-y divide-white/[0.05]">
+                    {recentFindings.map((finding) => (
+                      <div
+                        key={finding.id}
+                        className="flex min-w-0 items-center gap-3 py-4 first:pt-0 last:pb-0 sm:gap-4"
+                      >
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.02] text-[9px] text-[#454C57]">
+                          ◇
                         </div>
-                      )
-                    )}
 
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-xs font-medium text-[#B8BDC7]">
+                            {finding.title}
+                          </p>
+
+                          <div className="mt-1 flex min-w-0 items-center gap-2 sm:gap-3">
+                            <span className="min-w-0 truncate text-[9px] text-[#454C57]">
+                              {finding.project?.name ||
+                                "Unknown Project"}
+                            </span>
+
+                            <span className="shrink-0 text-[9px] text-[#454C57]">
+                              {formatDate(finding.createdAt)}
+                            </span>
+                          </div>
+                        </div>
+
+                        <SeverityBadge
+                          severity={finding.severity}
+                        />
+                      </div>
+                    ))}
                   </div>
                 )}
-
               </div>
-
             </div>
 
             {/* RIGHT */}
 
-            <div className="space-y-6">
+            <div className="min-w-0 max-w-full space-y-6">
 
               {/* QUICK ACTION */}
 
-              <div className="relative overflow-hidden rounded-2xl border border-[#6C63FF]/15 bg-[#0B0914]/90 p-6">
-
+              <div className="relative min-w-0 overflow-hidden rounded-2xl border border-[#6C63FF]/15 bg-[#0B0914]/90 p-6">
                 <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-[#6C63FF]/10 blur-3xl" />
 
-                <div className="relative">
-
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#6C63FF]/20 bg-[#0D0B18] text-[#6C63FF]">
+                <div className="relative min-w-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#6C63FF]/20 bg-[#0D0B18] text-[#6C63FF]">
                     ✦
                   </div>
 
@@ -764,35 +643,30 @@ export default function DashboardPage() {
                     SENTINEL INTELLIGENCE
                   </p>
 
-                  <h2 className="mt-2 text-lg font-medium text-white">
+                  <h2 className="mt-2 break-words text-lg font-medium text-white">
                     Analyze your source
                   </h2>
 
-                  <p className="mt-3 text-xs leading-6 text-[#68707D]">
-                    Upload a source file or paste code
-                    into a project and let SentinelAI
-                    inspect it for security issues.
+                  <p className="mt-3 break-words text-xs leading-6 text-[#68707D]">
+                    Upload a source file or paste code into
+                    a project and let SentinelAI inspect it
+                    for security issues.
                   </p>
 
                   <Link
                     href="/projects"
-                    className="mt-6 flex h-10 items-center justify-center rounded-lg border border-[#6C63FF]/20 bg-[#6C63FF]/10 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#8B84FF] transition hover:bg-[#6C63FF]/15 hover:text-white"
+                    className="mt-6 flex h-10 w-full min-w-0 items-center justify-center rounded-lg border border-[#6C63FF]/20 bg-[#6C63FF]/10 text-[9px] font-semibold uppercase tracking-[0.16em] text-[#8B84FF] transition hover:bg-[#6C63FF]/15 hover:text-white"
                   >
                     Open Projects →
                   </Link>
-
                 </div>
-
               </div>
 
               {/* PROJECTS */}
 
-              <div className="rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-6 backdrop-blur-xl">
-
-                <div className="flex items-end justify-between">
-
-                  <div>
-
+              <div className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-6 backdrop-blur-xl">
+                <div className="flex min-w-0 items-end justify-between gap-4">
+                  <div className="min-w-0">
                     <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-[#555D6B]">
                       WORKSPACE
                     </p>
@@ -800,35 +674,27 @@ export default function DashboardPage() {
                     <h2 className="mt-2 text-lg font-medium text-[#B8BDC7]">
                       Recent Projects
                     </h2>
-
                   </div>
 
                   <Link
                     href="/projects"
-                    className="text-[9px] uppercase tracking-[0.16em] text-[#555D6B] transition hover:text-white"
+                    className="shrink-0 text-[9px] uppercase tracking-[0.16em] text-[#555D6B] transition hover:text-white"
                   >
                     View All →
                   </Link>
-
                 </div>
 
                 {loading ? (
                   <div className="mt-5 space-y-3">
-
-                    {[1, 2, 3].map(
-                      (item) => (
-                        <div
-                          key={item}
-                          className="h-14 animate-pulse rounded-lg bg-white/[0.025]"
-                        />
-                      )
-                    )}
-
+                    {[1, 2, 3].map((item) => (
+                      <div
+                        key={item}
+                        className="h-14 animate-pulse rounded-lg bg-white/[0.025]"
+                      />
+                    ))}
                   </div>
-                ) : recentProjects.length ===
-                  0 ? (
+                ) : recentProjects.length === 0 ? (
                   <div className="mt-5 rounded-xl border border-dashed border-white/[0.07] p-7 text-center">
-
                     <p className="text-xs text-[#68707D]">
                       No projects created yet.
                     </p>
@@ -839,53 +705,42 @@ export default function DashboardPage() {
                     >
                       Create Project →
                     </Link>
-
                   </div>
                 ) : (
-                  <div className="mt-5 space-y-2">
+                  <div className="mt-5 min-w-0 space-y-2">
+                    {recentProjects.map((project) => (
+                      <Link
+                        key={project.id}
+                        href={`/projects/${project.id}`}
+                        className="group flex min-w-0 items-center gap-3 rounded-xl border border-transparent bg-white/[0.015] p-3 transition hover:border-white/[0.06] hover:bg-white/[0.03]"
+                      >
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.06] bg-[#0D0F13] text-[#555D6B] transition group-hover:border-[#6C63FF]/20 group-hover:text-[#6C63FF]">
+                          ◈
+                        </div>
 
-                    {recentProjects.map(
-                      (project) => (
-                        <Link
-                          key={project.id}
-                          href={`/projects/${project.id}`}
-                          className="group flex items-center gap-3 rounded-xl border border-transparent bg-white/[0.015] p-3 transition hover:border-white/[0.06] hover:bg-white/[0.03]"
-                        >
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-xs font-medium text-[#B8BDC7]">
+                            {project.name}
+                          </p>
 
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/[0.06] bg-[#0D0F13] text-[#555D6B] transition group-hover:border-[#6C63FF]/20 group-hover:text-[#6C63FF]">
-                            ◈
-                          </div>
+                          <p className="mt-1 truncate text-[9px] text-[#454C57]">
+                            {project.description ||
+                              "Security analysis project"}
+                          </p>
+                        </div>
 
-                          <div className="min-w-0 flex-1">
-
-                            <p className="truncate text-xs font-medium text-[#B8BDC7]">
-                              {project.name}
-                            </p>
-
-                            <p className="mt-1 truncate text-[9px] text-[#454C57]">
-                              {project.description ||
-                                "Security analysis project"}
-                            </p>
-
-                          </div>
-
-                          <span className="text-[#454C57] transition group-hover:text-[#6C63FF]">
-                            →
-                          </span>
-
-                        </Link>
-                      )
-                    )}
-
+                        <span className="shrink-0 text-[#454C57] transition group-hover:text-[#6C63FF]">
+                          →
+                        </span>
+                      </Link>
+                    ))}
                   </div>
                 )}
-
               </div>
 
               {/* ACTIVITY SUMMARY */}
 
-              <div className="rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-6 backdrop-blur-xl">
-
+              <div className="min-w-0 rounded-2xl border border-white/[0.07] bg-[#080A0D]/80 p-6 backdrop-blur-xl">
                 <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-[#555D6B]">
                   ACTIVITY
                 </p>
@@ -895,9 +750,7 @@ export default function DashboardPage() {
                 </h2>
 
                 <div className="mt-5 grid grid-cols-2 gap-3">
-
-                  <div className="rounded-xl border border-white/[0.05] bg-white/[0.015] p-4">
-
+                  <div className="min-w-0 rounded-xl border border-white/[0.05] bg-white/[0.015] p-4">
                     <p className="text-[8px] uppercase tracking-[0.16em] text-[#454C57]">
                       OPEN
                     </p>
@@ -905,11 +758,9 @@ export default function DashboardPage() {
                     <p className="mt-2 text-xl font-semibold text-white">
                       {summary.open}
                     </p>
-
                   </div>
 
-                  <div className="rounded-xl border border-white/[0.05] bg-white/[0.015] p-4">
-
+                  <div className="min-w-0 rounded-xl border border-white/[0.05] bg-white/[0.015] p-4">
                     <p className="text-[8px] uppercase tracking-[0.16em] text-[#454C57]">
                       RESOLVED
                     </p>
@@ -917,20 +768,16 @@ export default function DashboardPage() {
                     <p className="mt-2 text-xl font-semibold text-white">
                       {summary.resolved}
                     </p>
-
                   </div>
-
                 </div>
 
-                <div className="mt-4 rounded-xl border border-white/[0.05] bg-white/[0.015] p-4">
-
-                  <div className="flex items-center justify-between">
-
-                    <span className="text-[8px] uppercase tracking-[0.16em] text-[#454C57]">
+                <div className="mt-4 min-w-0 rounded-xl border border-white/[0.05] bg-white/[0.015] p-4">
+                  <div className="flex min-w-0 items-center justify-between gap-3">
+                    <span className="truncate text-[8px] uppercase tracking-[0.16em] text-[#454C57]">
                       RESOLUTION RATE
                     </span>
 
-                    <span className="text-xs text-[#8B929F]">
+                    <span className="shrink-0 text-xs text-[#8B929F]">
                       {summary.total === 0
                         ? 0
                         : Math.round(
@@ -940,11 +787,9 @@ export default function DashboardPage() {
                           )}
                       %
                     </span>
-
                   </div>
 
-                  <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/[0.04]">
-
+                  <div className="mt-3 h-1.5 min-w-0 overflow-hidden rounded-full bg-white/[0.04]">
                     <div
                       className="h-full rounded-full bg-[#6C63FF]"
                       style={{
@@ -958,21 +803,13 @@ export default function DashboardPage() {
                               }%`,
                       }}
                     />
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           </section>
-
         </div>
-
       </main>
-
     </div>
   );
 }

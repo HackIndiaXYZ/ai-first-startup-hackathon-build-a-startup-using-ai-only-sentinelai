@@ -15,12 +15,9 @@ export default function Background() {
         if (!ctx) return;
 
         let animationFrame;
-        let resizeObserver;
 
         let width = 0;
         let height = 0;
-        let previousHeight = 0;
-
         let dpr = 1;
 
         let particles = [];
@@ -30,39 +27,25 @@ export default function Background() {
         // ==================================================
 
         const CONFIG = {
-            // Approximate page area per particle.
-            // Lower = more particles.
             particleArea: 7000,
 
             minParticles: 70,
             maxParticles: 420,
 
-            // Particle size
             minSize: 0.8,
             maxSize: 2.4,
 
-            // Particle movement
             minSpeed: 0.15,
             maxSpeed: 0.55,
 
-            // Connection distance
             connectionDistance: 140,
 
-            // Mouse interaction
             mouseRadius: 240,
             mouseForce: 2.0,
 
-            // Small percentage of cyan nodes
             cyanChance: 0.055,
 
-            // Randomness inside each distribution cell.
-            // Keeps the network organic instead of looking
-            // like a perfect grid.
             cellJitter: 0.32,
-
-            // Don't create particles for tiny page
-            // height changes.
-            growthThreshold: 80,
         };
 
         // ==================================================
@@ -75,36 +58,26 @@ export default function Background() {
         };
 
         // ==================================================
-        // RANDOM HELPER
+        // RANDOM
         // ==================================================
 
         function random(min, max) {
-            return (
-                Math.random() *
-                    (max - min) +
-                min
-            );
+            return Math.random() * (max - min) + min;
         }
 
         // ==================================================
         // PARTICLE COUNT
         // ==================================================
 
-        function calculateParticleCount(
-            targetWidth = width,
-            targetHeight = height
-        ) {
-            const area =
-                targetWidth *
-                targetHeight;
+        function calculateParticleCount() {
+            const area = width * height;
 
             return Math.max(
                 CONFIG.minParticles,
                 Math.min(
                     CONFIG.maxParticles,
                     Math.floor(
-                        area /
-                            CONFIG.particleArea
+                        area / CONFIG.particleArea
                     )
                 )
             );
@@ -156,7 +129,7 @@ export default function Background() {
                 this.y += this.speedY;
 
                 // ------------------------------------------
-                // WRAP AROUND
+                // VIEWPORT WRAP
                 // ------------------------------------------
 
                 if (this.x < 0) {
@@ -194,7 +167,7 @@ export default function Background() {
                     const distance =
                         Math.sqrt(
                             dx * dx +
-                                dy * dy
+                            dy * dy
                         );
 
                     if (
@@ -242,47 +215,24 @@ export default function Background() {
         }
 
         // ==================================================
-        // CREATE EVENLY DISTRIBUTED PARTICLES
-        // ==================================================
-        //
-        // One particle is placed in each logical cell.
-        //
-        // This prevents:
-        //
-        // ❌ random clusters
-        // ❌ huge empty areas
-        //
-        // while jitter prevents:
-        //
-        // ❌ obvious grid pattern
-        //
+        // CREATE EVEN PARTICLES
         // ==================================================
 
-        function createEvenParticles(
-            count,
-            regionTop,
-            regionHeight
-        ) {
+        function createEvenParticles(count) {
             const result = [];
 
-            if (
-                count <= 0 ||
-                regionHeight <= 0
-            ) {
+            if (count <= 0) {
                 return result;
             }
 
             const aspectRatio =
                 width /
-                Math.max(
-                    regionHeight,
-                    1
-                );
+                Math.max(height, 1);
 
             let columns = Math.ceil(
                 Math.sqrt(
                     count *
-                        aspectRatio
+                    aspectRatio
                 )
             );
 
@@ -293,7 +243,7 @@ export default function Background() {
 
             const rows = Math.ceil(
                 count /
-                    columns
+                columns
             );
 
             const cellWidth =
@@ -301,7 +251,7 @@ export default function Background() {
                 columns;
 
             const cellHeight =
-                regionHeight /
+                height /
                 rows;
 
             for (
@@ -321,24 +271,15 @@ export default function Background() {
                         break;
                     }
 
-                    // --------------------------------------
-                    // CELL CENTER
-                    // --------------------------------------
-
                     const centerX =
                         column *
                             cellWidth +
                         cellWidth / 2;
 
                     const centerY =
-                        regionTop +
                         row *
                             cellHeight +
                         cellHeight / 2;
-
-                    // --------------------------------------
-                    // CONTROLLED RANDOM OFFSET
-                    // --------------------------------------
 
                     const jitterX =
                         cellWidth *
@@ -362,10 +303,6 @@ export default function Background() {
                             jitterY
                         );
 
-                    // --------------------------------------
-                    // KEEP INSIDE CANVAS
-                    // --------------------------------------
-
                     x = Math.max(
                         2,
                         Math.min(
@@ -375,11 +312,9 @@ export default function Background() {
                     );
 
                     y = Math.max(
-                        regionTop + 2,
+                        2,
                         Math.min(
-                            regionTop +
-                                regionHeight -
-                                2,
+                            height - 2,
                             y
                         )
                     );
@@ -397,125 +332,28 @@ export default function Background() {
         }
 
         // ==================================================
-        // INITIAL PARTICLES
+        // BUILD PARTICLES
         // ==================================================
 
-        function buildInitialParticles() {
+        function buildParticles() {
             const count =
                 calculateParticleCount();
 
             particles =
                 createEvenParticles(
-                    count,
-                    0,
-                    height
+                    count
                 );
-        }
-
-        // ==================================================
-        // ADD PARTICLES ONLY TO NEW BOTTOM AREA
-        // ==================================================
-        //
-        // IMPORTANT:
-        //
-        // Existing particles are NOT moved.
-        //
-        // If page changes:
-        //
-        //       1000px
-        //         ↓
-        //       1800px
-        //
-        // new particles are created only in:
-        //
-        //       1000px → 1800px
-        //
-        // ==================================================
-
-        function addParticlesToBottom(
-            oldHeight,
-            newHeight
-        ) {
-            const targetCount =
-                calculateParticleCount(
-                    width,
-                    newHeight
-                );
-
-            const currentCount =
-                particles.length;
-
-            const additionalCount =
-                targetCount -
-                currentCount;
-
-            if (
-                additionalCount <= 0
-            ) {
-                return;
-            }
-
-            const growthHeight =
-                newHeight -
-                oldHeight;
-
-            if (
-                growthHeight <
-                CONFIG.growthThreshold
-            ) {
-                return;
-            }
-
-            const newParticles =
-                createEvenParticles(
-                    additionalCount,
-                    oldHeight,
-                    growthHeight
-                );
-
-            particles.push(
-                ...newParticles
-            );
-        }
-
-        // ==================================================
-        // REMOVE EXCESS PARTICLES
-        // ==================================================
-
-        function trimParticles() {
-            const targetCount =
-                calculateParticleCount();
-
-            if (
-                particles.length >
-                targetCount
-            ) {
-                particles =
-                    particles.slice(
-                        0,
-                        targetCount
-                    );
-            }
         }
 
         // ==================================================
         // SPATIAL GRID
-        // ==================================================
-        //
-        // Instead of checking every particle against
-        // every other particle, only nearby particles
-        // are checked.
-        //
-        // Much better for long pages.
-        //
         // ==================================================
 
         function createSpatialGrid() {
             const cellSize =
                 CONFIG.connectionDistance;
 
-            const grid =
-                new Map();
+            const grid = new Map();
 
             for (
                 const particle of particles
@@ -523,13 +361,13 @@ export default function Background() {
                 const cellX =
                     Math.floor(
                         particle.x /
-                            cellSize
+                        cellSize
                     );
 
                 const cellY =
                     Math.floor(
                         particle.y /
-                            cellSize
+                        cellSize
                     );
 
                 const key =
@@ -564,8 +402,7 @@ export default function Background() {
 
         function connectParticles() {
             if (
-                particles.length <
-                2
+                particles.length < 2
             ) {
                 return;
             }
@@ -573,7 +410,8 @@ export default function Background() {
             const {
                 grid,
                 cellSize,
-            } = createSpatialGrid();
+            } =
+                createSpatialGrid();
 
             const maxDistance =
                 CONFIG.connectionDistance;
@@ -594,10 +432,6 @@ export default function Background() {
                 ] = key
                     .split(",")
                     .map(Number);
-
-                // ------------------------------------------
-                // CHECK ONLY NEIGHBORING CELLS
-                // ------------------------------------------
 
                 for (
                     let offsetX = -1;
@@ -635,10 +469,6 @@ export default function Background() {
                                 ) {
                                     continue;
                                 }
-
-                                // ----------------------------------
-                                // Prevent duplicate connections.
-                                // ----------------------------------
 
                                 if (
                                     particleA.x >
@@ -683,7 +513,7 @@ export default function Background() {
                                 const opacity =
                                     1 -
                                     distance /
-                                        maxDistance;
+                                    maxDistance;
 
                                 ctx.beginPath();
 
@@ -702,8 +532,7 @@ export default function Background() {
                                               0.18
                                           })`;
 
-                                ctx.lineWidth =
-                                    0.7;
+                                ctx.lineWidth = 0.7;
 
                                 ctx.moveTo(
                                     particleA.x,
@@ -724,42 +553,15 @@ export default function Background() {
         }
 
         // ==================================================
-        // CANVAS RESIZE
+        // RESIZE
         // ==================================================
 
         function resizeCanvas() {
-            const documentElement =
-                document.documentElement;
-
-            const body =
-                document.body;
-
-            const newWidth =
-                Math.max(
-                    window.innerWidth,
-                    documentElement.clientWidth
-                );
-
-            const newHeight =
-                Math.max(
-                    documentElement.scrollHeight,
-                    body?.scrollHeight || 0,
-                    window.innerHeight
-                );
-
-            const oldHeight =
-                height;
-
-            width = newWidth;
-            height = newHeight;
-
-            // ------------------------------------------
-            // DEVICE PIXEL RATIO
-            // ------------------------------------------
+            width = window.innerWidth;
+            height = window.innerHeight;
 
             dpr = Math.min(
-                window.devicePixelRatio ||
-                    1,
+                window.devicePixelRatio || 1,
                 1.5
             );
 
@@ -774,10 +576,10 @@ export default function Background() {
                 );
 
             canvas.style.width =
-                `${width}px`;
+                "100vw";
 
             canvas.style.height =
-                `${height}px`;
+                "100vh";
 
             ctx.setTransform(
                 dpr,
@@ -788,69 +590,19 @@ export default function Background() {
                 0
             );
 
-            // ------------------------------------------
-            // FIRST INITIALIZATION
-            // ------------------------------------------
-
-            if (
-                particles.length === 0
-            ) {
-                buildInitialParticles();
-
-                previousHeight =
-                    height;
-
-                return;
-            }
-
-            // ------------------------------------------
-            // PAGE GREW
-            // ------------------------------------------
-            //
-            // Existing particles stay where they are.
-            // New particles are created ONLY below.
-            //
-            // ------------------------------------------
-
-            if (
-                height >
-                oldHeight +
-                    CONFIG.growthThreshold
-            ) {
-                addParticlesToBottom(
-                    oldHeight,
-                    height
-                );
-            }
-
-            // ------------------------------------------
-            // PAGE SHRANK
-            // ------------------------------------------
-
-            if (
-                height <
-                oldHeight
-            ) {
-                trimParticles();
-            }
-
-            previousHeight =
-                height;
+            buildParticles();
         }
 
         // ==================================================
-        // MOUSE EVENTS
+        // MOUSE
         // ==================================================
 
-        function handleMouseMove(
-            event
-        ) {
+        function handleMouseMove(event) {
             mouse.x =
                 event.clientX;
 
             mouse.y =
-                event.clientY +
-                window.scrollY;
+                event.clientY;
         }
 
         function handleMouseLeave() {
@@ -863,10 +615,6 @@ export default function Background() {
         // ==================================================
 
         function animate() {
-            // ------------------------------------------
-            // BACKGROUND
-            // ------------------------------------------
-
             ctx.fillStyle =
                 "#000000";
 
@@ -878,7 +626,7 @@ export default function Background() {
             );
 
             // ------------------------------------------
-            // SUBTLE ORANGE AMBIENT GLOW
+            // AMBIENT GLOW
             // ------------------------------------------
 
             const glowRadius =
@@ -974,23 +722,6 @@ export default function Background() {
             handleMouseLeave
         );
 
-        // ==================================================
-        // WATCH DOCUMENT HEIGHT
-        // ==================================================
-
-        resizeObserver =
-            new ResizeObserver(() => {
-                resizeCanvas();
-            });
-
-        resizeObserver.observe(
-            document.body
-        );
-
-        // ==================================================
-        // START ANIMATION
-        // ==================================================
-
         animate();
 
         // ==================================================
@@ -1016,16 +747,15 @@ export default function Background() {
                 "mouseleave",
                 handleMouseLeave
             );
-
-            resizeObserver?.disconnect();
         };
     }, []);
 
     return (
-        <canvas
-            ref={canvasRef}
-            className="pointer-events-none absolute left-0 top-0 z-0"
-            aria-hidden="true"
-        />
-    );
+    <canvas
+        ref={canvasRef}
+        data-pdf-ignore="true"
+        className="pointer-events-none fixed inset-0 z-0 print:hidden"
+        aria-hidden="true"
+    />
+);
 }
